@@ -1,0 +1,111 @@
+:root {
+    --window-bg-color: lightgray;
+}
+
+body {
+    background-color: white;
+    font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;
+}
+
+:not(input[type="text"]) {
+    cursor: default;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+input[type="text"] {
+    cursor: text;
+    user-select: text;
+    -webkit-user-select: text;
+}
+
+html, body, #app-container {
+    margin: 0px;
+    padding: 0px;
+    border: 0px;
+    height: 100%;
+}
+
+#app-container {
+    display: flex;
+    flex-direction: column;
+    background-color: red; /*dbg*/
+}
+
+#app-main-row {
+    display: flex;
+    flex: 1;
+    background-color: yellow; /*dbg*/
+}
+
+#app-top-pane {
+    background-color: darkgray;
+    height: 4em;
+}
+
+#app-left-pane {
+    display: flex;
+    flex-direction: column;
+    background-color: var(--window-bg-color);
+}
+
+#app-center-pane {
+    background-color: pink; /*dbg*/
+    flex: 1;
+    overflow: hidden;
+}
+
+.section {
+    margin: 0.5em;
+}
+
+.section-title {
+    font-weight: bold;
+    margin-bottom: 0.5em;
+}
+
+table.edit-table {
+    border-collapse: collapse;
+    background-color: white;
+    border-radius: 3px;
+    width: 1em;
+}
+
+.edit-table th {
+    letter-spacing: 0.5px;
+}
+
+.edit-table thead th {
+    padding: 0.5em;
+}
+
+.edit-table tr {
+    border-bottom: 1px solid var(--window-bg-color);
+}
+
+.edit-table tbody td {
+    text-align: center;
+    padding: 0.5em;
+}
+
+.edit-table#surface-table td:first-child, .edit-table#surface-table th:first-child {
+    border-right: 1px solid var(--window-bg-color);
+    font-family: bold;
+}
+
+.edit-table-cell {
+    padding-left: 0.5em;
+    padding-right: 0.5em;
+}
+
+.edit-table input[type="text"] {
+    border: none;
+    text-align: center;
+    font-size: inherit;
+    width: 100%;
+}
+
+#main-canvas {
+    width: 100%;
+    height: 100%;
+}

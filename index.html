@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Open Optical Designer</title>
+        <link rel="stylesheet" href="style.css">
+        <script src="complex.js"></script>
+        <script src="material-data.js"></script>
+        <script src="material.js"></script>
+        <script src="surface.js"></script>
+        <script src="design.js"></script>
+        <script src="renderer.js"></script>
+        <script src="ui.js"></script>
+        <script src="main.js"></script>
+    </head>
+    <body>
+        <div id="app-container">
+            <div id="app-top-pane">
+
+            </div>
+            <div id="app-main-row">
+                <div id="app-left-pane">
+                    <div id="surface-editor-section" class="section">
+                        <div class="section-title">
+                            Surface Editor
+                        </div>
+                        <table id="surface-table" class="edit-table">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Radius of Curvature</th>
+                                    <th>Aperture Radius</th>
+                                    <th>Thickness</th>
+                                    <th>Material</th>
+                                </tr>
+                            </thead>
+                            <tbody id="surface-table-body">
+                                <!-- Begin Table Sample Content -->
+                                <tr>
+                                    <td>1</td>
+                                    <td><input type="text" value="100"></td>
+                                    <td><input type="text" value="25"></td>
+                                    <td><input type="text" value="10"></td>
+                                    <td>PMMA</td>
+                                </tr>
+                                <tr>
+                                    <td>2</td>
+                                    <td><input type="text" value="0"></td>
+                                    <td><input type="text" value="25"></td>
+                                    <td><input type="text" value="10"></td>
+                                    <td>Air</td>
+                                </tr>
+                                <!-- End Table Sample Content -->
+                            </tbody>
+                        </table>
+                        <br>
+                        <div class="section-title">
+                            Details for Surface 1
+                        </div>
+                    </div>
+                </div>
+                <div id="app-center-pane">
+                    <canvas id="main-canvas" width="800" height="600">
+                        Your browser does not support the &lt;canvas&gt; element.
+                    </canvas>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
