@@ -93,6 +93,7 @@ const MATERIAL_DATA = [
             [2.000, 1.4381]
         ]
     },
+    /*
     {
         "name": "Aluminum",
         "tags": [ "mirror" ],
@@ -120,4 +121,5 @@ const MATERIAL_DATA = [
             [0.650, 0.05223, 4.40940]
         ]
     }
+    */
 ];

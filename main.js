@@ -23,15 +23,14 @@ function main() {
     loadMaterialData();
     app.design.addExamplePCXLens(200, 75, app.findMaterial("PMMA"), app.findMaterial("Air"));
     app.design.addExamplePCXLens(70, 55, app.findMaterial("PMMA"), app.findMaterial("Air"));
-    //app.design.addExamplePCXLens(-100, 40, app.findMaterial("PMMA"), app.findMaterial("Air"));
-    //app.design.addExamplePCXLens(80, 75, app.findMaterial("PMMA"), app.findMaterial("Air"));
+    app.design.addExamplePCXLens(-100, 40, app.findMaterial("PMMA"), app.findMaterial("Air"));
+    //app.design.addExamplePCXLens(100, 75, app.findMaterial("PMMA"), app.findMaterial("Air"));
+    //app.design.surfaces[0].conic_constant = -1;
     UI.writeDOMSurfaceTable();
     recreateMainCanvas();
 }
 
 function loadMaterialData() {
-    app.materials.push(VACUUM_MATERIAL);
-    app.materials.push(PERFECT_MIRROR_MATERIAL);
     for (let material_datum of MATERIAL_DATA) {
         app.materials.push(Material.fromJSON(material_datum));
     }
@@ -40,7 +39,6 @@ function loadMaterialData() {
 function recreateMainCanvas() {
     let canvas = document.getElementById("main-canvas");
     app.renderer = new TestRenderer(canvas);
-    app.renderer.c.scale(6,6);
     app.renderer.paint(app.design);
 }
 

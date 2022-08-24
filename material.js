@@ -12,6 +12,10 @@ class Material {
     }
 
     complexRefractiveIndex(wavelength) {
+        // returns:
+        // * an exact match for the input wavelength,
+        // * an inner linear interpolation between two immediately surrounding data points,
+        // * or an outer linear interpolation from the first or last two data points
         if (this.complex_refractive_index_at_wavelength.length == 1) {
             return this.complex_refractive_index_at_wavelength[0][1];
         }

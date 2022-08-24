@@ -45,6 +45,9 @@ class UI {
             let num_col = document.createElement("td");
             let num_text = document.createTextNode(n);
             num_col.appendChild(num_text);
+            num_col.addEventListener('mousedown', (event) => {
+                // TODO
+            });
             row.appendChild(num_col);
             n += 1;
 
@@ -55,12 +58,6 @@ class UI {
             let th = UI.createDOMSurfaceTableTextInput(surface, 'thickness');
             row.append(th);
 
-            /*
-            let mat = document.createElement("td");
-            let mat_name = document.createTextNode(surface.material.name);
-            mat.appendChild(mat_name);
-            row.append(mat);
-            */
            let mat = this.createDOMSurfaceTableMaterialSelect(surface);
            row.append(mat);
 

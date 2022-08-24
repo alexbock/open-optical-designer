@@ -109,3 +109,9 @@ table.edit-table {
     width: 100%;
     height: 100%;
 }
+
+#surface-detail-group {
+    background-color: white;
+    border-radius: 3px;
+    padding: 0.5em;
+}
