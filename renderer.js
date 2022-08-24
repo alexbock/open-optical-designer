@@ -51,7 +51,7 @@ class TestRenderer extends Renderer {
         let img_scale = Math.min(width_scale, height_scale);
         img_scale *= 0.9;
         this.c.scale(img_scale, img_scale);
-        this.c.translate(system_width * 0.1, this.canvas.offsetHeight/2/img_scale);
+        this.c.translate(system_width * 0.05, this.canvas.offsetHeight/2/img_scale);
         //this.c.translate(10, 10);
 
         this.c.strokeStyle = 'white';
@@ -121,6 +121,10 @@ class TestRenderer extends Renderer {
         fnumber = Math.round(fnumber * 100) / 100;
         this.c.font = '24px sans-serif';
         this.c.fillStyle = 'white';
-        this.c.fillText("f = " + focal_length + ", \u0192/" + fnumber, 10, 25);
+        let caption = "f = " + focal_length;
+        if (focal_length > 0) {
+            caption += ", \u0192/" + fnumber;
+        }
+        this.c.fillText(caption, 10, 25);
     }
 }

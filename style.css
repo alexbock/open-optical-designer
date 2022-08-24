@@ -64,6 +64,12 @@ html, body, #app-container {
     margin-bottom: 0.5em;
 }
 
+#surface-table-section-title {
+    margin-bottom: 0.2em;
+    display: flex;
+    align-items: center;
+}
+
 table.edit-table {
     border-collapse: collapse;
     background-color: white;
@@ -110,8 +116,41 @@ table.edit-table {
     height: 100%;
 }
 
-#surface-detail-group {
+#surface-detail-table {
+    width: inherit;
+}
+
+#surface-detail-table input[type="text"] {
+    width: 4em;
+}
+
+#surface-table-controls {
+    display: flex;
+}
+
+.surface-table-controls-button {
+    width: 1.75em;
+    height: 1.75em;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     background-color: white;
+    margin-bottom: 0.2em;
     border-radius: 3px;
-    padding: 0.5em;
+    margin-right: 0.2em;
+}
+
+.surface-table-controls-button:last-child {
+    margin-right: 0px;
+}
+
+.surface-table-controls-button-add:hover {
+    background-color: palegreen;
+}
+.surface-table-controls-button-remove:hover {
+    background-color: palevioletred;
+}
+
+.flex-expand {
+    flex: 1;
 }

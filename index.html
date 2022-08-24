@@ -22,8 +22,21 @@
             <div id="app-main-row">
                 <div id="app-left-pane">
                     <div id="surface-editor-section" class="section">
-                        <div class="section-title">
-                            Surface Editor
+                        
+                        <div id="surface-table-controls">
+                            <div id="surface-table-section-title" class="section-title">
+                                Surface Editor
+                            </div>
+                            <div class="flex-expand"></div>
+                            <div id="surface-table-add-after-button" class="surface-table-controls-button surface-table-controls-button-add" title="Add new surface after selection">
+                                <div>&roplus;&darr;</div>
+                            </div>
+                            <div id="surface-table-add-before-button" class="surface-table-controls-button surface-table-controls-button-add" title="Add new surface before selection">
+                                <div>&roplus;&uarr;</div>
+                            </div>
+                            <div id="surface-table-delete-button" class="surface-table-controls-button surface-table-controls-button-remove" title="Delete selected surface">
+                                <div>&rotimes;</div>
+                            </div>
                         </div>
                         <table id="surface-table" class="edit-table">
                             <thead>
@@ -56,14 +69,21 @@
                         </table>
                         <br>
                         <div class="section-title">
-                            Details for Surface 1
+                            Details for Surface <span id="surface-detail-selected-number">1</span>
                         </div>
-                        <div id="surface-detail-group">
-                            <!-- Begin Sample Content -->
-                            Conic Constant: <input type="text" value="0" size="6" style="font-size: inherit; text-align: center;">
-                            (Spherical)
-                            <!-- End Sample Content -->
-                        </div>
+                        <table id="surface-detail-table" class="edit-table">
+                            <tbody id="surface-detail-table-body">
+                                <!-- Begin Table Sample Content -->
+                                <tr>
+                                    <td>Conic Constant</td>
+                                    <td>
+                                        <input type="text" value="0" size="6" style="font-size: inherit; text-align: center;">
+                                    </td>
+                                    <td>(Spherical)</td>
+                                </tr>
+                            </tbody>
+                            <!-- End Table Sample Content -->
+                        </table>
                     </div>
                 </div>
                 <div id="app-center-pane">

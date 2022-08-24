@@ -5,6 +5,7 @@ class App {
         this.design = new Design();
         this.renderer = null;
         this.materials = [];
+        this.ui = new UI();
     }
 
     findMaterial(name) {
@@ -19,14 +20,21 @@ class App {
 
 let app = new App();
 
+function registerButtons() {
+    document.getElementById("surface-table-add-after-button").onclick = () => { app.ui.surfaceTableAddRowAfter(); };
+    document.getElementById("surface-table-add-before-button").onclick = () => { app.ui.surfaceTableAddRowBefore(); };
+    document.getElementById("surface-table-delete-button").onclick = () => { app.ui.surfaceTableDeleteRow(); };
+}
+
 function main() {
+    registerButtons();
     loadMaterialData();
     app.design.addExamplePCXLens(200, 75, app.findMaterial("PMMA"), app.findMaterial("Air"));
     app.design.addExamplePCXLens(70, 55, app.findMaterial("PMMA"), app.findMaterial("Air"));
     app.design.addExamplePCXLens(-100, 40, app.findMaterial("PMMA"), app.findMaterial("Air"));
     //app.design.addExamplePCXLens(100, 75, app.findMaterial("PMMA"), app.findMaterial("Air"));
     //app.design.surfaces[0].conic_constant = -1;
-    UI.writeDOMSurfaceTable();
+    app.ui.writeDOMSurfaceTable();
     recreateMainCanvas();
 }
 

@@ -48,4 +48,13 @@ class Design {
         }
         return result;
     }
+
+    indexForSurface(s) {
+        for (let i = 0; i < this.surfaces.length; i += 1) {
+            if (s === this.surfaces[i]) {
+                return i;
+            }
+        }
+        throw "requested index of surface not present in design";
+    }
 }
