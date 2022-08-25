@@ -24,6 +24,7 @@ class Renderer {
 class TestRenderer extends Renderer {
     testDrawSurface(surf, offset) {
         const points = surf.generateVisualOutlinePointList();
+        if (points.length == 0) { return; }
         this.c.beginPath();
         this.c.moveTo(points[0][0]+0+offset, points[0][1]+0);
         for (let point of points) {
@@ -49,7 +50,7 @@ class TestRenderer extends Renderer {
         }
         let height_scale = this.canvas.offsetHeight / (max_surface_height*2);
         let img_scale = Math.min(width_scale, height_scale);
-        img_scale *= 0.9;
+        img_scale *= 0.85;
         this.c.scale(img_scale, img_scale);
         this.c.translate(system_width * 0.05, this.canvas.offsetHeight/2/img_scale);
         //this.c.translate(10, 10);
@@ -61,7 +62,7 @@ class TestRenderer extends Renderer {
         let last_surface = null;
         for (let surface of design.surfaces) {
             let edges = this.testDrawSurface(surface, t);
-            if (last_edges && last_surface) {
+            if (edges && last_edges && last_surface) {
                 if (last_surface.material.name != 'Air' && last_surface.material.name != 'Vacuum') {
                     this.c.beginPath();
                     this.c.moveTo(last_edges[0][0]+0+t-last_surface.thickness, last_edges[0][1]+0);
@@ -105,7 +106,7 @@ class TestRenderer extends Renderer {
                     this.c.strokeStyle = 'yellow';
                     this.c.beginPath();
                     this.c.moveTo(ray_i[0]+0, ray_i[1]+0);
-                    this.c.lineTo(ray_i[0]+system_width+0, ray_i[1]+ray_i[2]*system_width+0);
+                    this.c.lineTo(ray_i[0]+system_width*2+0, ray_i[1]+ray_i[2]*system_width*2+0);
                     this.c.stroke();
                 }
             }
@@ -116,7 +117,7 @@ class TestRenderer extends Renderer {
         // test write system focal length
         let matrix = design.calculateMeyerArendtSystemMatrix();
         let focal_length = 1 / matrix[1];
-        let fnumber = focal_length/design.surfaces[0].aperture_radius;
+        let fnumber = focal_length/(design.surfaces[0].aperture_radius*2);
         focal_length = Math.round(focal_length * 100) / 100;
         fnumber = Math.round(fnumber * 100) / 100;
         this.c.font = '24px sans-serif';

@@ -2,7 +2,7 @@
 
 class Surface {
     constructor() {
-        this.radius_of_curvature = 0;
+        this.radius_of_curvature = Infinity;
         this.aperture_radius = 0;
         this.thickness = 0;
         this.material = VACUUM_MATERIAL;
@@ -48,22 +48,23 @@ class Surface {
         else if (k < -1) { return "hyperbolic"; }
     }
 
-    static traceRay(ray_ox, ray_oy, ray_angle, medium, surface) {
+    static traceRay(ray_ox, ray_oy, ray_slope, medium, surface) {
         let R = Math.abs(surface.radius_of_curvature);
         if (!Number.isFinite(R)) { R = 1e13; }
         let K = surface.conic_constant;
         if (Math.abs(K + 1) < 1e-13) { K = -1 - 1e-13; }
 
         // y = mx + b
-        const m = Math.tan(ray_angle);
+        const m = ray_slope;
         // b = y - mx = ray_oy - m * ray_ox
         const b = ray_oy - m * ray_ox;
 
         // (y-b)/m = (y*y) / (R + sqrt(R*R - (K + 1) * y * y))
         // y = (+/- sqrt(-b^2 K m^2 - b^2 m^2 - 2 b m^3 R + m^2 R^2) + b K + b + m R)/(K + m^2 + 1)
         // TODO avoid discontinuity for K=-1 m=0
-        let sign = ray_angle > 0 ? 1 : -1;
-        const y_intersect = (sign * -Math.sqrt(-b*b*K*m*m - b*b*m*m - 2*b*m*m*m*R + m*m*R*R) + b*K + b + m*R)/(K + m*m + 1);
+        let sign = ray_slope > 0 ? 1 : -1;
+        let curve_sign = surface.radius_of_curvature < 0 ? -1 : 1;
+        const y_intersect = (sign * curve_sign * -Math.sqrt(-b*b*K*m*m - b*b*m*m - curve_sign * 2*b*m*m*m*R + m*m*R*R) + b*K + b + curve_sign * m*R)/(K + m*m + 1);
         const x_intersect = surface.sag(y_intersect);
 
         // n1 -> n2: sin(t1)/sin(t2) = n2/n1
