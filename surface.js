@@ -17,13 +17,6 @@ class Surface {
         return sign * (y*y) / (R + Math.sqrt(R*R - (K + 1) * y * y));
     }
 
-    sag_derivative(y) {
-        const R = Math.abs(this.radius_of_curvature);
-        const K = this.conic_constant;
-        const sign = this.radius_of_curvature < 0 ? -1 : 1;
-        return sign * y / Math.sqrt(R*R - (K + 1) * y * y);
-    }
-
     generateVisualOutlinePointList() {
         let points = [];
         let reflected_points = [];
@@ -48,45 +41,57 @@ class Surface {
         else if (k < -1) { return "hyperbolic"; }
     }
 
-    static traceRay(ray_ox, ray_oy, ray_slope, medium, surface) {
+    static traceRay2D(ray_ox, ray_oy, ray_slope, medium, surface) {
+        // a request for a 2D ray trace to render the design view
+        // where x is the optical axis and y is the height is
+        // transformed to a 3D ray trace restricted to the plane x=0
+        // where z is the optical axis and y is the height 
+        let obj_pt = [0, ray_oy, ray_ox];
+        let ray_dir = [0, ray_slope, 1];
+        let result = this.traceRay3D(obj_pt, ray_dir, medium, surface);
+        return [result[0][2], result[0][1], result[1][1] / result[1][2]];
+    }
+
+    // from the object point, trace light travelling in the ray direction through the medium to the surface
+    // and calculate the angle of refraction at the surface boundary
+    static traceRay3D(obj_pt, ray_dir, medium, surface) {
         let R = Math.abs(surface.radius_of_curvature);
         if (!Number.isFinite(R)) { R = 1e13; }
         let K = surface.conic_constant;
         if (Math.abs(K + 1) < 1e-13) { K = -1 - 1e-13; }
 
-        // y = mx + b
-        const m = ray_slope;
-        // b = y - mx = ray_oy - m * ray_ox
-        const b = ray_oy - m * ray_ox;
+        // find point where ray intersects surface
+        // x = x0 + ta
+        // y = y0 + tb
+        // z = z0 + tc
+        // z = (sqrt(x^2 + y^2)^2) / (R + sqrt(R*R - (K+1) * sqrt(x^2 + y^2)^2))
+        // see "solve-line-conic-intersect.py" and "line-conic-intersect.txt" in "derivations/"
+        const [x_0, y_0, z_0] = obj_pt;
+        const [a, b, c] = ray_dir;
+        const curve_sign = surface.radius_of_curvature < 0 ? -1 : 1;
+        const t = (-K*c*z_0 + curve_sign * R*c - a*x_0 - b*y_0 - c*z_0 - curve_sign * Math.sqrt(-K*a**2*z_0**2 + 2*K*a*c*x_0*z_0 - K*b**2*z_0**2 + 2*K*b*c*y_0*z_0 - K*c**2*x_0**2 - K*c**2*y_0**2 + R**2*c**2 + curve_sign * 2*R*a**2*z_0 - curve_sign * 2*R*a*c*x_0 + curve_sign * 2*R*b**2*z_0 - curve_sign * 2*R*b*c*y_0 - a**2*y_0**2 - a**2*z_0**2 + 2*a*b*x_0*y_0 + 2*a*c*x_0*z_0 - b**2*x_0**2 - b**2*z_0**2 + 2*b*c*y_0*z_0 - c**2*x_0**2 - c**2*y_0**2))/(K*c**2 + a**2 + b**2 + c**2);
+        const x = x_0 + t*a;
+        const y = y_0 + t*b;
+        const z = z_0 + t*c;
+        const intersection = [x, y, z];
 
-        // (y-b)/m = (y*y) / (R + sqrt(R*R - (K + 1) * y * y))
-        // y = (+/- sqrt(-b^2 K m^2 - b^2 m^2 - 2 b m^3 R + m^2 R^2) + b K + b + m R)/(K + m^2 + 1)
-        // TODO avoid discontinuity for K=-1 m=0
-        let sign = ray_slope > 0 ? 1 : -1;
-        let curve_sign = surface.radius_of_curvature < 0 ? -1 : 1;
-        const y_intersect = (sign * curve_sign * -Math.sqrt(-b*b*K*m*m - b*b*m*m - curve_sign * 2*b*m*m*m*R + m*m*R*R) + b*K + b + curve_sign * m*R)/(K + m*m + 1);
-        const x_intersect = surface.sag(y_intersect);
+        // calculate surface normal vector
+        // see "derivations/find-3d-conic-partial-derivatives.py"
+        const dzdx = curve_sign * x*(K + 1)*(x**2 + y**2)/((R + Math.sqrt(R**2 - (K + 1)*(x**2 + y**2)))**2*Math.sqrt(R**2 - (K + 1)*(x**2 + y**2))) + curve_sign * 2*x/(R + Math.sqrt(R**2 - (K + 1)*(x**2 + y**2)));
+        const dzdy = curve_sign * y*(K + 1)*(x**2 + y**2)/((R + Math.sqrt(R**2 - (K + 1)*(x**2 + y**2)))**2*Math.sqrt(R**2 - (K + 1)*(x**2 + y**2))) + curve_sign * 2*y/(R + Math.sqrt(R**2 - (K + 1)*(x**2 + y**2)));
+        const normal_dir = [dzdx, dzdy, -1];
 
-        // n1 -> n2: sin(t1)/sin(t2) = n2/n1
-        // angles from surface normal
-        let nk1 = medium.complexRefractiveIndex(app.design.center_wavelength);
-        let nk2 = surface.material.complexRefractiveIndex(app.design.center_wavelength);
-        let tangent_slope = 1/surface.sag_derivative(y_intersect);
-        let normal_slope = -1/tangent_slope;
+        // calculate refraction angle
+        // n1 -> n2: sin(t1)/sin(t2) = n2/n1 where t1 and t2 are angles from normal
+        const nk1 = medium.complexRefractiveIndex(app.design.center_wavelength);
+        const nk2 = surface.material.complexRefractiveIndex(app.design.center_wavelength);
+        const normal_unit = Vector.normalized(normal_dir);
+        const ray_unit = Vector.normalized(ray_dir);
+        const cos_t1 = -Vector.dot(normal_unit, ray_unit);
+        if (cos_t1 < 0) { throw "wrong sign for surface normal"; }
+        const n = nk1.real / nk2.real;
+        const refract_dir = Vector.sum(Vector.product(n, ray_unit), Vector.product(n*cos_t1 - Math.sqrt(1 - n*n * (1 - cos_t1*cos_t1)), normal_unit));
 
-        // cos(t1) = -dot(normal, ray)
-        const normal_vector_mag = Math.sqrt(-1 * -1 + normal_slope * normal_slope);
-        const normal_unit_vector = [-1 / normal_vector_mag, -normal_slope / normal_vector_mag];
-        const ray_vector_mag = Math.sqrt(1 + m * m);
-        const ray_unit_vector = [1 / ray_vector_mag, m / ray_vector_mag];
-        const cos_t1 = -(normal_unit_vector[0] * ray_unit_vector[0] + normal_unit_vector[1] * ray_unit_vector[1]);
-
-        const r = nk1.real / nk2.real;
-        const c = cos_t1;
-        const nf = r * c - Math.sqrt(1 - r*r * (1 - c*c));
-        let vr = [r*ray_unit_vector[0] + nf * normal_unit_vector[0], r*ray_unit_vector[1] + nf*normal_unit_vector[1]];
-        let new_ray_slope = vr[1]/vr[0];
-
-        return [x_intersect, y_intersect, new_ray_slope];
+        return [intersection, refract_dir];
     }
 }

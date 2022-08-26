@@ -35,7 +35,7 @@ class TestRenderer extends Renderer {
     }
     
     paint(design) {
-        this.c.fillStyle = 'cornflowerblue';
+        this.c.fillStyle = 'steelblue';
         this.c.fillRect(0, 0, this.canvas.offsetWidth, this.canvas.offsetHeight);
     
         this.c.save();
@@ -53,7 +53,6 @@ class TestRenderer extends Renderer {
         img_scale *= 0.85;
         this.c.scale(img_scale, img_scale);
         this.c.translate(system_width * 0.05, this.canvas.offsetHeight/2/img_scale);
-        //this.c.translate(10, 10);
 
         this.c.strokeStyle = 'white';
         this.c.lineWidth='0.3';
@@ -64,12 +63,29 @@ class TestRenderer extends Renderer {
             let edges = this.testDrawSurface(surface, t);
             if (edges && last_edges && last_surface) {
                 if (last_surface.material.name != 'Air' && last_surface.material.name != 'Vacuum') {
+                    // draw edges
                     this.c.beginPath();
-                    this.c.moveTo(last_edges[0][0]+0+t-last_surface.thickness, last_edges[0][1]+0);
-                    this.c.lineTo(edges[0][0]+0+t, edges[0][1]+0);
-                    this.c.moveTo(last_edges[1][0]+0+t-last_surface.thickness, last_edges[1][1]+0);
-                    this.c.lineTo(edges[1][0]+0+t, edges[1][1]+0);
+                    this.c.moveTo(last_edges[0][0]+t-last_surface.thickness, last_edges[0][1]);
+                    this.c.lineTo(edges[0][0]+t, edges[0][1]);
+                    this.c.moveTo(last_edges[1][0]+t-last_surface.thickness, last_edges[1][1]);
+                    this.c.lineTo(edges[1][0]+t, edges[1][1]);
                     this.c.stroke();
+
+                    // fill lens area
+                    this.c.fillStyle = "rgba(255,255,255,0.1)";
+                    this.c.beginPath();
+                    let last_pts = last_surface.generateVisualOutlinePointList();
+                    let this_pts = surface.generateVisualOutlinePointList();
+                    this_pts.reverse();
+                    this.c.moveTo(last_pts[0][0]+t-last_surface.thickness, last_pts[0][1]);
+                    for (let pt of last_pts) {
+                        this.c.lineTo(pt[0]+t-last_surface.thickness, pt[1]);
+                    }
+                    for (let pt of this_pts) {
+                        this.c.lineTo(pt[0]+t, pt[1]);
+                    }
+                    this.c.closePath();
+                    this.c.fill();
                 }
             }
             t += surface.thickness;
@@ -79,14 +95,14 @@ class TestRenderer extends Renderer {
 
         // test ray trace
         this.c.lineWidth='0.15';
-        for (let w = 0; w < 13; ++w) {
-            let ray_o = [-50, -30 + w*5];
-            let ray_i = Surface.traceRay(ray_o[0], ray_o[1], /*-Math.PI/6*/0, app.findMaterial("Air"), design.surfaces[0]);
+        for (let w = 2; w < 20; ++w) {
+            let ray_o = [-50, -37.5 + w*(37.5*2/21)];
+            let ray_i = Surface.traceRay2D(ray_o[0], ray_o[1], /*-Math.PI/6*/0, app.findMaterial("Air"), design.surfaces[0]);
 
-            this.c.strokeStyle = 'yellow';
+            this.c.strokeStyle = 'orange';
             this.c.beginPath();
-            this.c.moveTo(ray_o[0]+0, ray_o[1]+0);
-            this.c.lineTo(ray_i[0]+0, ray_i[1]+0);
+            this.c.moveTo(ray_o[0], ray_o[1]);
+            this.c.lineTo(ray_i[0], ray_i[1]);
             this.c.stroke();
 
             let t_off = 0;
@@ -94,19 +110,30 @@ class TestRenderer extends Renderer {
                 t_off += design.surfaces[s-1].thickness;
                 let new_angle = ray_i[2];
                 ray_o = [ray_i[0] - t_off, ray_i[1]];
-                ray_i = Surface.traceRay(ray_o[0], ray_o[1], new_angle, design.surfaces[s-1].material, design.surfaces[s]);
+                ray_i = Surface.traceRay2D(ray_o[0], ray_o[1], new_angle, design.surfaces[s-1].material, design.surfaces[s]);
                 ray_i[0] += t_off;
-                this.c.strokeStyle = 'yellow';
+
+                if (false) {
+                    // debug: view extrapolated refraction angle
+                    // vs actual path to intersection point
+                    this.c.strokeStyle = 'green';
+                    this.c.beginPath();
+                    this.c.moveTo(ray_o[0]+t_off, ray_o[1]);
+                    this.c.lineTo(ray_o[0]+t_off+5, ray_o[1]+5*new_angle);
+                    this.c.stroke();
+                }
+
+                this.c.strokeStyle = 'orange';
                 this.c.beginPath();
-                this.c.moveTo(ray_o[0]+t_off+0, ray_o[1]+0);
-                this.c.lineTo(ray_i[0]+0, ray_i[1]+0);
+                this.c.moveTo(ray_o[0]+t_off, ray_o[1]);
+                this.c.lineTo(ray_i[0], ray_i[1]);
                 this.c.stroke();
 
                 if (s == design.surfaces.length - 1) {
-                    this.c.strokeStyle = 'yellow';
+                    this.c.strokeStyle = 'orange';
                     this.c.beginPath();
-                    this.c.moveTo(ray_i[0]+0, ray_i[1]+0);
-                    this.c.lineTo(ray_i[0]+system_width*2+0, ray_i[1]+ray_i[2]*system_width*2+0);
+                    this.c.moveTo(ray_i[0], ray_i[1]);
+                    this.c.lineTo(ray_i[0]+system_width*2, ray_i[1]+ray_i[2]*system_width*2);
                     this.c.stroke();
                 }
             }

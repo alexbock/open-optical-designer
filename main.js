@@ -32,6 +32,9 @@ function main() {
     app.design.addExamplePCXLens(200, 75, app.findMaterial("PMMA"), app.findMaterial("Air"));
     app.design.addExamplePCXLens(70, 55, app.findMaterial("PMMA"), app.findMaterial("Air"));
     app.design.addExamplePCXLens(-100, 40, app.findMaterial("PMMA"), app.findMaterial("Air"));
+    app.design.surfaces[0].material = app.findMaterial("N-SF11");
+    app.design.surfaces[2].material = app.findMaterial("N-BK7");
+    app.design.surfaces[4].material = app.findMaterial("N-SF11");
     //app.design.addExamplePCXLens(100, 75, app.findMaterial("PMMA"), app.findMaterial("Air"));
     //app.design.surfaces[0].conic_constant = -1;
     app.ui.writeDOMSurfaceTable();

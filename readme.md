@@ -9,7 +9,7 @@ effective control of image aberrations.
 ## Features
 
 * Generalized aspherical conic surfaces
-* Refractive ray tracing
+* Refractive ray tracing in 3D
 * Material database
 * Focal length and f-number calculation
 
