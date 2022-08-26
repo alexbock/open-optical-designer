@@ -40,7 +40,8 @@ class TestRenderer extends Renderer {
     
         this.c.save();
 
-        let system_width = (1/design.calculateMeyerArendtSystemMatrix()[1]);
+        //let system_width = (1/design.calculateMeyerArendtSystemMatrix()[1]);
+        let system_width = design.traceMarginalRayToImageDistance();
         let width_scale = this.canvas.offsetWidth / system_width;
         let max_surface_height = 0;
         for (let surface of design.surfaces) {
@@ -52,7 +53,7 @@ class TestRenderer extends Renderer {
         let img_scale = Math.min(width_scale, height_scale);
         img_scale *= 0.85;
         this.c.scale(img_scale, img_scale);
-        this.c.translate(system_width * 0.05, this.canvas.offsetHeight/2/img_scale);
+        this.c.translate(system_width * 0.10, this.canvas.offsetHeight/2/img_scale);
 
         this.c.strokeStyle = 'white';
         this.c.lineWidth='0.3';
@@ -95,8 +96,9 @@ class TestRenderer extends Renderer {
 
         // test ray trace
         this.c.lineWidth='0.15';
-        for (let w = 2; w < 20; ++w) {
-            let ray_o = [-50, -37.5 + w*(37.5*2/21)];
+        const initial_radius = Math.floor(app.design.surfaces[0].aperture_radius);
+        for (let w = 0; w < initial_radius+1; ++w) {
+            let ray_o = [-initial_radius, -initial_radius + w*(initial_radius*2/(initial_radius))];
             let ray_i = Surface.traceRay2D(ray_o[0], ray_o[1], /*-Math.PI/6*/0, app.findMaterial("Air"), design.surfaces[0]);
 
             this.c.strokeStyle = 'orange';
@@ -123,6 +125,10 @@ class TestRenderer extends Renderer {
                     this.c.stroke();
                 }
 
+                if (s != design.surfaces.length - 1 && Math.abs(ray_i[1]) > design.surfaces[s].aperture_radius) {
+                    break;
+                }
+
                 this.c.strokeStyle = 'orange';
                 this.c.beginPath();
                 this.c.moveTo(ray_o[0]+t_off, ray_o[1]);
@@ -138,6 +144,21 @@ class TestRenderer extends Renderer {
                 }
             }
         }
+
+        // test draw point at image
+        const image_distance_paraxial = app.design.traceMarginalRayToImageDistance(10);
+        const image_distance_mid = app.design.traceMarginalRayToImageDistance(2);
+        const image_distance_marginal = app.design.traceMarginalRayToImageDistance(1);
+        this.c.fillStyle = 'black';
+        this.c.beginPath();
+        this.c.arc(image_distance_paraxial, 0, 0.3, 0, 2*Math.PI);
+        this.c.fill();
+        this.c.beginPath();
+        this.c.arc(image_distance_marginal, 0, 0.3, 0, 2*Math.PI);
+        this.c.fill();
+        this.c.beginPath();
+        this.c.arc(image_distance_mid, 0, 0.3, 0, 2*Math.PI);
+        this.c.fill();
         
         this.c.restore();
 
