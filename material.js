@@ -3,6 +3,7 @@
 class Material {
     constructor(name, complex_refractive_index_at_wavelength, description, tags, reference) {
         this.name = name;
+        this.alternate_name = null;
         this.description = description;
         this.tags = tags;
         this.reference = reference;
@@ -12,6 +13,7 @@ class Material {
     }
 
     complexRefractiveIndex(wavelength) {
+        if (!wavelength) { throw "missing wavelength for refractive index"; }
         // returns:
         // * an exact match for the input wavelength,
         // * an inner linear interpolation between two immediately surrounding data points,
@@ -63,7 +65,9 @@ class Material {
             const k = entry.length > 2 ? entry[2] : 0;
             refr_index_data.push([wavelength, new Complex(n,k)]);
         }
-        return new Material(obj.name, refr_index_data, obj.description, obj.tags, obj.reference);
+        let result = new Material(obj.name, refr_index_data, obj.description, obj.tags, obj.reference);
+        result.alternate_name = obj.alternate_name;
+        return result;
     }
 }
 

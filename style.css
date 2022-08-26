@@ -47,6 +47,7 @@ html, body, #app-container {
     display: flex;
     flex-direction: column;
     background-color: var(--window-bg-color);
+    border-right: 4px solid darkgrey;
 }
 
 #app-center-pane {
@@ -153,4 +154,16 @@ table.edit-table {
 
 .flex-expand {
     flex: 1;
+}
+
+#env-control-table {
+    width: inherit;
+}
+
+#env-control-table input[type="text"] {
+    width: 4em;
+}
+
+#env-control-table td {
+    text-align: left;
 }

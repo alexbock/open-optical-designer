@@ -10,7 +10,7 @@ class App {
 
     findMaterial(name) {
         for (let m of this.materials) {
-            if (m.name == name) {
+            if (m.name == name || (m.alternate_name && m.alternate_name == name)) {
                 return m;
             }
         }
@@ -24,6 +24,17 @@ function registerButtons() {
     document.getElementById("surface-table-add-after-button").onclick = () => { app.ui.surfaceTableAddRowAfter(); };
     document.getElementById("surface-table-add-before-button").onclick = () => { app.ui.surfaceTableAddRowBefore(); };
     document.getElementById("surface-table-delete-button").onclick = () => { app.ui.surfaceTableDeleteRow(); };
+    document.getElementById("btn-import-len-file").onchange = async (e) => {
+        let result = await Design.importLenFile(e);
+        if (result) {
+            app.design = result;
+            app.ui.writeDOMSurfaceTable();
+            app.ui.writeDOMEnvironmentControl();
+            app.renderer.paint(app.design);
+        } else {
+            alert('import failed');
+        }
+    };
 }
 
 function main() {
@@ -38,6 +49,7 @@ function main() {
     //app.design.addExamplePCXLens(100, 75, app.findMaterial("PMMA"), app.findMaterial("Air"));
     //app.design.surfaces[0].conic_constant = -1;
     app.ui.writeDOMSurfaceTable();
+    app.ui.writeDOMEnvironmentControl();
     recreateMainCanvas();
 }
 

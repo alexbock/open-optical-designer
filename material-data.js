@@ -109,6 +109,23 @@ const MATERIAL_DATA = [
             [5.0000, 2.3783]
         ]
     },
+    {
+        "name": "Germanium",
+        "alternate_name": "GERM",
+        "reference": "Amotchkina et al, 2020",
+        "refractive_index": [
+            [2, 4.0449],
+            [3, 4.0021],
+            [4, 3.9817],
+            [5, 3.9723],
+            [6, 3.9671],
+            [7, 3.9640],
+            [8, 3.9620],
+            [9, 3.9606],
+            [10, 3.9597],
+            [11, 3.9589]
+        ]
+    },
     /*
     {
         "name": "Aluminum",

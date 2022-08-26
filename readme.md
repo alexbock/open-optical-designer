@@ -1,7 +1,7 @@
 # Open Optical Designer
 
 This is an early work-in-progress web application for
-designing optical lenses consisting of multiple lens elements.
+designing optical lenses consisting of sequential lens elements.
 It is intended to eventually support practical design of, for
 example, a large aperture double gauss lens for a full frame camera with
 effective control of image aberrations.
@@ -10,13 +10,14 @@ effective control of image aberrations.
 
 * Generalized aspherical conic surfaces
 * Refractive ray tracing calculated in 3D
-* Automatic 2D design viewport
+* Incoming ray environment control
+* Automatic 2D cross section viewport
 * Material database
 * Focal length and f-number calculation
+* Import designs from ".len" files
 
 ## Planned Functionality
 
-* Incoming ray environment control
 * Material browser
 * Define surface properties in terms of a formula
 * Save/load designs as local files

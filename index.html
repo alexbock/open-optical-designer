@@ -18,12 +18,14 @@
     <body>
         <div id="app-container">
             <div id="app-top-pane">
-
+                <div>
+                    <!-- TODO UI design -->
+                    Import <tt>.len</tt> file: <input type="file" id="btn-import-len-file">
+                </div>
             </div>
             <div id="app-main-row">
                 <div id="app-left-pane">
                     <div id="surface-editor-section" class="section">
-                        
                         <div id="surface-table-controls">
                             <div id="surface-table-section-title" class="section-title">
                                 Surface Editor
@@ -81,6 +83,30 @@
                                         <input type="text" value="0" size="6" style="font-size: inherit; text-align: center;">
                                     </td>
                                     <td>(Spherical)</td>
+                                </tr>
+                                <!-- End Table Sample Content -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <hr style="border: 2px solid darkgrey; width: 100%;">
+                    <div class="section">
+                        <div class="section-title">
+                            Environment Control
+                        </div>
+                        <table id="env-control-table" class="edit-table">
+                            <tbody id="env-control-table-body">
+                                <!-- Begin Table Sample Content -->
+                                <tr>
+                                    <td>Input Beam Radius</td>
+                                    <td>
+                                        <input type="text" value="0" size="6" style="font-size: inherit; text-align: center;">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Input FOV Angle</td>
+                                    <td>
+                                        <input type="text" value="0" size="6" style="font-size: inherit; text-align: center;">
+                                    </td>
                                 </tr>
                                 <!-- End Table Sample Content -->
                             </tbody>
