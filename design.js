@@ -140,13 +140,18 @@ class Design {
     }
 
     dbg_plotOpticalPathLengthBeforeImagePlane(limit) {
-        if (!limit) { limit = 1; }
+        if (!limit) { limit = this.surfaces[0].aperture_radius / this.env_beam_radius; }
         const initial_radius = this.surfaces[0].aperture_radius / limit;
         let opls = [];
-        for (let w = 0; w < 101; ++w) {
+        for (let w = 0; w < 201; ++w) {
             let opl = 0;
-            let ray_o = [-50, w*(initial_radius/100)];
-            let ray_i = Surface.traceRay2D(ray_o[0], ray_o[1], 0, app.findMaterial("Air"), this.surfaces[0]);
+            //let ray_o = [-50, w*(initial_radius/100)];
+            //let ray_i = Surface.traceRay2D(ray_o[0], ray_o[1], 0, app.findMaterial("Air"), this.surfaces[0]);
+
+            let ray_o = [-1000, 0];
+            let slope = Math.atan(((w / 200) * initial_radius) / 1000);
+            let ray_i = Surface.traceRay2D(ray_o[0], ray_o[1], slope, app.findMaterial("Air"), this.surfaces[0]);
+
             opl += Vector.magnitude(Vector.sum(Vector.product(-1, ray_o), ray_i.slice(0,2))) * app.findMaterial("Air").refractiveIndex(this.center_wavelength);
 
             let t_off = 0;
@@ -175,9 +180,10 @@ class Design {
         opls = opls.concat(opls_r);
         let zero = opls[opls.length / 2];
         for (let opl of opls) {
-            opl -= zero;
+            //opl -= zero;
             app.renderer.c.fillStyle = "black";
-            app.renderer.c.fillRect(20 + i*5, 60, 4, opl*10 /*%0.001 * 100000*/);
+            //app.renderer.c.fillRect(i*5, 60, 4, opl*10);
+            app.renderer.c.fillRect(10 + i*1, 60, 1, opl % 0.000587 * 200000);
             i += 1;
         }
     }

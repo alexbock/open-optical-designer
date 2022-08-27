@@ -44,6 +44,10 @@ class TestRenderer extends Renderer {
 
         for (let w = 0; w < initial_radius+0.5; w += 0.25) {
             let ray_o = [backstep, -initial_radius + w*(initial_radius*2/(initial_radius)) + height_offset];
+            if (false) { // TODO option
+                ray_o[1] = 0;
+                input_slope = Math.atan(w/Math.abs(backstep));
+            }
             let ray_i = Surface.traceRay2D(ray_o[0], ray_o[1], input_slope, app.findMaterial("Air"), design.surfaces[0]);
 
             this.c.strokeStyle = color;
@@ -190,6 +194,9 @@ class TestRenderer extends Renderer {
         this.c.stroke();
 
         this.c.restore();
+
+        // debug
+        //app.design.dbg_plotOpticalPathLengthBeforeImagePlane();
 
         // test write system focal length
         let matrix = design.calculateMeyerArendtSystemMatrix();
