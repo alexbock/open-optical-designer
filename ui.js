@@ -52,7 +52,6 @@ class UI {
 
     writeDOMSurfaceTable() {
         let tbody = document.getElementById("surface-table-body");
-        
         tbody.innerHTML = "";
         let n = 1;
         for (let surface of app.design.surfaces) {

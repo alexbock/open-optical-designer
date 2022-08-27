@@ -139,7 +139,7 @@ class Design {
         return image_distance;
     }
 
-    plotOpticalPathLengthBeforeImagePlane(limit) {
+    dbg_plotOpticalPathLengthBeforeImagePlane(limit) {
         if (!limit) { limit = 1; }
         const initial_radius = this.surfaces[0].aperture_radius / limit;
         let opls = [];
@@ -180,5 +180,23 @@ class Design {
             app.renderer.c.fillRect(20 + i*5, 60, 4, opl*10 /*%0.001 * 100000*/);
             i += 1;
         }
+    }
+
+    distanceToVertexForSurface(n) {
+        let d = 0;
+        for (let i = 0; i < n; i += 1) {
+            d += this.surfaces[i].thickness;
+        }
+        return d;
+    }
+
+    dbg_autofocus() {
+        const limit = this.surfaces[0].aperture_radius / this.env_beam_radius;
+        const img_dist = this.traceMarginalRayToImageDistance(limit);
+        const si = this.surfaces.length - 1;
+        const offset = this.distanceToVertexForSurface(si);
+        this.surfaces[si].thickness = img_dist - offset;
+        app.ui.writeDOMSurfaceTable();
+        app.renderer.paint(app.design);
     }
 }
