@@ -3,7 +3,9 @@
 class Design {
     constructor() {
         this.surfaces = []
-        this.center_wavelength = 0.58756;
+        this.center_wavelength = 0.550;
+        this.short_wavelength = 0.440;
+        this.long_wavelength = 0.620;
         this.env_beam_radius = 5;
         this.env_fov_angle = 0;
         this.env_beam_cross_distance = 65;
@@ -107,7 +109,7 @@ class Design {
     }
 
     // TODO refactor to use system trace
-    traceMarginalRayToImageDistance(limit) {
+    traceMarginalRayToImageDistance(limit, wavelength) {
         if (!limit) { limit = 1; }
         const initial_radius = this.surfaces[0].aperture_radius / limit;
         let image_distance = 0;
@@ -123,7 +125,7 @@ class Design {
                 if (Math.abs(ray_o[1]) > this.surfaces[s-1].aperture_radius) {
                     break;
                 }
-                ray_i = Surface.traceRay2D(ray_o[0], ray_o[1], new_angle, this.surfaces[s-1].material, this.surfaces[s]);
+                ray_i = Surface.traceRay2D(ray_o[0], ray_o[1], new_angle, this.surfaces[s-1].material, this.surfaces[s], wavelength);
                 ray_i[0] += t_off;
 
                 if (s == this.surfaces.length - 1) {
@@ -240,10 +242,13 @@ class Design {
     //   by the thickness of the appended surface
     // * continue_after_ray_miss: if true, the trace will
     //   proceed even after a ray misses a surface
+    // * wavelength: use the specified wavelength
+    //   instead of the center wavelength
     traceRayThroughSystem(obj_pt, ray_dir, options) {
         obj_pt = obj_pt.slice();
         ray_dir = ray_dir.slice();
         if (!options) { options = {}; }
+        const wavelength = options.wavelength || this.center_wavelength;
 
         let pending_medium = this.env_initial_material;
         let pending_thickness = 0;
@@ -261,7 +266,7 @@ class Design {
         for (let i = 0; i < trace_surfaces.length; i += 1) {
             const surface = trace_surfaces[i];
 
-            const trace_result = Surface.traceRay3D(obj_pt, ray_dir, pending_medium, surface);
+            const trace_result = Surface.traceRay3D(obj_pt, ray_dir, pending_medium, surface, wavelength);
             const intersection = trace_result[0]; // relative to surface vertex
             const refract_dir = trace_result[1];
 
@@ -328,5 +333,37 @@ class Design {
             intensity_image[i] = Math.min(intensity_image[i], 1.0);
         }
         return [image_buffer_width, intensity_image];
+    }
+
+    calculateChromaticAberration() {
+        let focus_distances = [];
+        let img_plane_pts = [];
+        const wavelengths = [ this.short_wavelength, this.center_wavelength, this.long_wavelength ];
+        for (let w of wavelengths) {
+            let h = this.env_beam_radius;
+
+            let crossing = this.traceMarginalRayToImageDistance(this.surfaces[0].aperture_radius/h, w);
+            focus_distances.push(crossing);
+
+            let obj_pt = [0, h, -20];
+            let ray_dir = [0,0,1];
+            let result = this.traceRayThroughSystem(obj_pt, ray_dir, {
+                append_surface: Surface.createBackstop(0),
+                wavelength: w
+            });
+            if (!result) { return null; }
+            let img_plane_pt = [result[0], result[1]];
+            img_plane_pts.push(img_plane_pt);
+        }
+        let transverse_differences = [];
+        for (let i = 0; i < 3; i += 1) {
+            transverse_differences.push(Math.sqrt((img_plane_pts[0][0] - img_plane_pts[i][0])**2 + (img_plane_pts[0][1] - img_plane_pts[i][1])**2));
+        }
+        let axial_differences = [];
+        for (let i = 0; i < 3; i += 1) {
+            axial_differences.push(focus_distances[i] - focus_distances[1]);
+        }
+
+        return [axial_differences, transverse_differences];
     }
 }

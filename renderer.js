@@ -235,5 +235,36 @@ class TestRenderer extends Renderer {
             this.c.fillText("Top: optical path length relative to center", 10, 25 + 24);
             this.c.fillText("Bottom: optical phase for monochromatic center wavelength", 10, 25 + 24 + 14);
         }
+
+        if (app.ui.center_pane_view_mode == 'chromatic_aberration') {
+            let result = app.design.calculateChromaticAberration();
+
+            this.c.fillStyle = bg_color;
+            this.c.fillRect(0, 0, this.canvas.offsetWidth, this.canvas.offsetHeight);
+            this.c.font = '24px sans-serif';
+            this.c.fillStyle = 'white';
+
+            if (result) {
+                this.c.fillText("Axial CA offset from center wavelength optical axis crossing: ", 10, 25);
+                let h = 25 + 24;
+                let names = [app.design.short_wavelength, app.design.center_wavelength, app.design.long_wavelength];
+                this.c.font = '24px monospace';
+                for (let i = 0; i < 3; i += 1) {
+                    this.c.fillText((result[0][i] >= 0 ? " " : "") + result[0][i].toFixed(2) + " at " + names[i].toFixed(2) + " \u03BCm", 10, h);
+                    h += 24;
+                }
+                h += 10;
+                this.c.font = '24px sans-serif';
+                this.c.fillText("Transverse CA offset from short wavelength at image plane: ", 10, h);
+                h += 24;
+                this.c.font = '24px monospace';
+                for (let i = 0; i < 3; i += 1) {
+                    this.c.fillText((result[1][i] >= 0 ? " " : "") + result[1][i].toFixed(2) + " at " + names[i].toFixed(2) + " \u03BCm", 10, h);
+                    h += 24;
+                }
+            } else {
+                this.c.fillText("Beam radius is out of bounds", 10, 25);
+            }
+        }
     }
 }

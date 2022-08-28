@@ -20,6 +20,7 @@ and the design of reflecting telescopes is planned in the future.
 * Geometric point spread function (spot diagram)
 * Paraxial calculation of focal length and f-number
 * Optical path length and phase
+* Axial and transverse chromatic aberration
 * Material database
 * Import designs from ".len" files
 * Light and dark UI color schemes
@@ -28,7 +29,6 @@ and the design of reflecting telescopes is planned in the future.
 
 * Numerical aperture and effective f-number
 * Report:
-    * Axial chromatic aberration
     * Field curvature
     * Spherical aberration
     * Coma

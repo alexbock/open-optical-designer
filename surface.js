@@ -48,20 +48,21 @@ class Surface {
         else if (k < -1) { return "hyperbolic"; }
     }
 
-    static traceRay2D(ray_ox, ray_oy, ray_slope, medium, surface) {
+    static traceRay2D(ray_ox, ray_oy, ray_slope, medium, surface, wavelength) {
         // a request for a 2D ray trace to render the design view
         // where x is the optical axis and y is the height is
         // transformed to a 3D ray trace restricted to the plane x=0
         // where z is the optical axis and y is the height 
         let obj_pt = [0, ray_oy, ray_ox];
         let ray_dir = [0, ray_slope, 1];
-        let result = this.traceRay3D(obj_pt, ray_dir, medium, surface);
+        let result = this.traceRay3D(obj_pt, ray_dir, medium, surface, wavelength);
         return [result[0][2], result[0][1], result[1][1] / result[1][2]];
     }
 
     // from the object point, trace light travelling in the ray direction through the medium to the surface
     // and calculate the angle of refraction at the surface boundary
-    static traceRay3D(obj_pt, ray_dir, medium, surface) {
+    static traceRay3D(obj_pt, ray_dir, medium, surface, wavelength) {
+        if (!wavelength) { wavelength = app.design.center_wavelength; }
         let R = Math.abs(surface.radius_of_curvature);
         if (!Number.isFinite(R)) { R = 1e13; }
         let K = surface.conic_constant;
@@ -90,8 +91,8 @@ class Surface {
 
         // calculate refraction angle
         // n1 -> n2: sin(t1)/sin(t2) = n2/n1 where t1 and t2 are angles from normal
-        const nk1 = medium.complexRefractiveIndex(app.design.center_wavelength);
-        const nk2 = surface.material.complexRefractiveIndex(app.design.center_wavelength);
+        const nk1 = medium.complexRefractiveIndex(wavelength);
+        const nk2 = surface.material.complexRefractiveIndex(wavelength);
         const normal_unit = Vector.normalized(normal_dir);
         const ray_unit = Vector.normalized(ray_dir);
         const cos_t1 = -Vector.dot(normal_unit, ray_unit);
