@@ -173,9 +173,6 @@ class TestRenderer extends Renderer {
 
         this.c.restore();
 
-        // debug
-        //app.design.dbg_plotOpticalPathLengthBeforeImagePlane();
-
         // write system focal length
         let matrix = design.calculateMeyerArendtSystemMatrix();
         let focal_length = 1 / matrix[1];
@@ -217,6 +214,26 @@ class TestRenderer extends Renderer {
             this.c.font = '24px sans-serif';
             this.c.fillStyle = 'white';
             this.c.fillText("Geometric Point Spread Function", 10, 25);
+        }
+
+        // TODO clean up layout and scaling
+        if (app.ui.center_pane_view_mode == 'opl') {
+            this.c.fillStyle = bg_color;
+            this.c.fillRect(0, 0, this.canvas.offsetWidth, this.canvas.offsetHeight);
+            this.c.save();
+            this.c.translate(0, this.canvas.offsetHeight/2);
+            this.c.scale(1,-1);
+            app.design.plotOpticalPathLengthBeforeImagePlane(undefined, false);
+            this.c.scale(1,-1);
+            this.c.translate(0, -50);
+            app.design.plotOpticalPathLengthBeforeImagePlane(undefined, true);
+            this.c.restore();
+            this.c.font = '24px sans-serif';
+            this.c.fillStyle = 'white';
+            this.c.fillText("Optical Path Length", 10, 25);
+            this.c.font = '14px sans-serif';
+            this.c.fillText("Top: optical path length relative to center", 10, 25 + 24);
+            this.c.fillText("Bottom: optical phase for monochromatic center wavelength", 10, 25 + 24 + 14);
         }
     }
 }

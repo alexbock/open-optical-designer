@@ -140,17 +140,19 @@ class Design {
     }
 
     // TODO refactor to use system trace
-    dbg_plotOpticalPathLengthBeforeImagePlane(limit) {
+    plotOpticalPathLengthBeforeImagePlane(limit, draw_as_phase) {
         if (!limit) { limit = this.surfaces[0].aperture_radius / this.env_beam_radius; }
         const initial_radius = this.surfaces[0].aperture_radius / limit;
         let opls = [];
-        for (let w = 0; w < 201; ++w) {
+        let samples = 400;
+        let img_dist = this.distanceToVertexForSurface(this.surfaces.length - 1) + this.surfaces[this.surfaces.length - 1].thickness;
+        for (let w = 0; w < samples + 1; ++w) {
             let opl = 0;
             //let ray_o = [-50, w*(initial_radius/100)];
             //let ray_i = Surface.traceRay2D(ray_o[0], ray_o[1], 0, AIR_MATERIAL, this.surfaces[0]);
 
             let ray_o = [-1000, 0];
-            let slope = Math.atan(((w / 200) * initial_radius) / 1000);
+            let slope = Math.atan(((w / samples) * initial_radius) / 1000);
             let ray_i = Surface.traceRay2D(ray_o[0], ray_o[1], slope, AIR_MATERIAL, this.surfaces[0]);
 
             opl += Vector.magnitude(Vector.sum(Vector.product(-1, ray_o), ray_i.slice(0,2))) * AIR_MATERIAL.refractiveIndex(this.center_wavelength);
@@ -167,9 +169,14 @@ class Design {
                 opl += Vector.magnitude(Vector.sum(Vector.product(-1, ray_o), ray_i.slice(0,2))) * this.surfaces[s-1].material.refractiveIndex(this.center_wavelength);
                 ray_i[0] += t_off;
 
+                // TODO handle misses/TIR
+
                 if (s == this.surfaces.length - 1) {
                     const x = ray_i[0];
                     const y = ray_i[1];
+
+                    opl += Math.sqrt(y**2 + (img_dist - x)**2);
+
                     opls.push(opl);
                 }
             }
@@ -181,10 +188,17 @@ class Design {
         opls = opls.concat(opls_r);
         let zero = opls[opls.length / 2];
         for (let opl of opls) {
-            //opl -= zero;
             app.renderer.c.fillStyle = "black";
-            //app.renderer.c.fillRect(i*5, 60, 4, opl*10);
-            app.renderer.c.fillRect(10 + i*1, 60, 1, opl % 0.000587 * 200000);
+            if (draw_as_phase) {
+                app.renderer.c.fillRect(10 + i, 100, 1, 150);
+                let phase_scale = opl % (this.center_wavelength/1000) / (this.center_wavelength/1000);
+                let phase_color = "hsl(" + phase_scale*360 + "deg,50%,50%)";
+                app.renderer.c.fillStyle = phase_color;
+                app.renderer.c.fillRect(10 + i, 100, 1, phase_scale * 150);
+            } else {
+                opl -= zero;
+                app.renderer.c.fillRect(10 + i, 100, 1, opl*200);
+            }
             i += 1;
         }
     }

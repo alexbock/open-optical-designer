@@ -18,8 +18,9 @@ and the design of reflecting telescopes is planned in the future.
 * Incoming ray environment control
 * Automatic 2D cross section viewport
 * Geometric point spread function (spot diagram)
-* Material database
 * Paraxial calculation of focal length and f-number
+* Optical path length and phase
+* Material database
 * Import designs from ".len" files
 * Light and dark UI color schemes
 
@@ -34,8 +35,6 @@ and the design of reflecting telescopes is planned in the future.
     * Distortion
     * Overall surface transmission for unpolarized light
     * Abbe sine condition
-    * Optical path difference
-    * Optical phase difference
     * Wavefront analysis
 * Save/load designs as local files
 * Modulation transfer function graph

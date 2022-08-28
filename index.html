@@ -18,10 +18,13 @@
     <body>
         <div id="app-container">
             <div id="app-top-pane">
-                <div>
+                <div style="display: flex;">
                     <!-- TODO UI design -->
-                    <label for="btn-import-len-file">Import <tt>.len</tt> file</label>
-                    <input type="file" id="btn-import-len-file" style="display: none;">
+                    <div class="flex-expand"></div>
+                    <div style="margin: 1em; padding: 0.3em; background-color: var(--table-bg-color); border-radius: 3px;">
+                        <label for="btn-import-len-file">Import <tt>.len</tt> file</label>
+                        <input type="file" id="btn-import-len-file" style="display: none;">
+                    </div>
                 </div>
             </div>
             <div id="app-main-row">
@@ -121,6 +124,7 @@
                             <select id="select-center-view">
                                 <option value="design2d">2D Design</option>
                                 <option value="geo_psf">Point Spread Function</option>
+                                <option value="opl">Optical Path Length</option>
                             </select>
                         </div>
                     </div>
