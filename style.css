@@ -1,5 +1,8 @@
 :root {
     --window-bg-color: lightgray;
+    --window-bg-secondary-color: darkgray;
+    --table-bg-color: white;
+    --cross-section-viewport-bg-color: steelblue;
 }
 
 body {
@@ -39,7 +42,7 @@ html, body, #app-container {
 }
 
 #app-top-pane {
-    background-color: darkgray;
+    background-color: var(--window-bg-secondary-color);
     height: 4em;
 }
 
@@ -47,7 +50,7 @@ html, body, #app-container {
     display: flex;
     flex-direction: column;
     background-color: var(--window-bg-color);
-    border-right: 4px solid darkgrey;
+    border-right: 4px solid var(--window-bg-secondary-color);
 }
 
 #app-center-pane {
@@ -73,7 +76,7 @@ html, body, #app-container {
 
 table.edit-table {
     border-collapse: collapse;
-    background-color: white;
+    background-color: var(--table-bg-color);
     border-radius: 3px;
     width: 1em;
 }
@@ -135,7 +138,7 @@ table.edit-table {
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: white;
+    background-color: var(--table-bg-color);
     margin-bottom: 0.2em;
     border-radius: 3px;
     margin-right: 0.2em;
@@ -166,4 +169,38 @@ table.edit-table {
 
 #env-control-table td {
     text-align: left;
+}
+
+.section-separator {
+    border: 2px solid var(--window-bg-secondary-color);
+    width: 100%;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --window-bg-color: #222222;
+        --window-bg-secondary-color: #333333;
+        --table-bg-color: var(--window-bg-secondary-color);
+        --dark-mode-default-white: #EEEEEE;
+        --cross-section-viewport-bg-color: midnightblue;
+
+        color: var(--dark-mode-default-white);
+    }
+
+    input[type="text"], select {
+        background-color: var(--table-bg-color);
+        color: var(--dark-mode-default-white);
+        border: none;
+    }
+
+    select {
+        -webkit-appearance: none;
+    }
+
+    .surface-table-controls-button-add:hover {
+        background-color: darkgreen;
+    }
+    .surface-table-controls-button-remove:hover {
+        background-color: darkred;
+    }
 }

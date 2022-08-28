@@ -20,6 +20,7 @@ and the design of reflecting telescopes is planned in the future.
 * Material database
 * Paraxial calculation of focal length and f-number
 * Import designs from ".len" files
+* Light and dark UI color schemes
 
 ## Planned Functionality
 

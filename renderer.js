@@ -96,7 +96,9 @@ class TestRenderer extends Renderer {
     }
     
     paint(design) {
-        this.c.fillStyle = 'steelblue';
+        let bg_color = getComputedStyle(document.body).getPropertyValue("--cross-section-viewport-bg-color");
+
+        this.c.fillStyle = bg_color;
         this.c.fillRect(0, 0, this.canvas.offsetWidth, this.canvas.offsetHeight);
     
         this.c.save();
