@@ -204,4 +204,79 @@ class Design {
         app.ui.writeDOMSurfaceTable();
         app.renderer.paint(app.design);
     }
+
+    // traces rays from an object point through all surfaces
+    // in the design sequentially
+    // options:
+    // * call_after_each_trace: a callback function invoked
+    //   with a context object containing:
+    //   * src_pt and dest_pt: the positions of the ray
+    //     before and after the previous trace relative
+    //     to the design origin
+    //   * refract_dir: the direction vector that the
+    //     refracted ray will follow next
+    //   * medium: the medium across the previous trace
+    // * append_surface: an additional surface to
+    //   include after the design surfaces; if the
+    //   thickness of the appended surface is non-zero,
+    //   then the thickness of the final design surface
+    //   before the appended surface will be overriden
+    //   by the thickness of the appended surface
+    // * continue_after_ray_miss: if true, the trace will
+    //   proceed even after a ray misses a surface
+    traceRayThroughSystem(obj_pt, ray_dir, options) {
+        obj_pt = obj_pt.slice();
+        ray_dir = ray_dir.slice();
+        if (!options) { options = {}; }
+
+        let pending_medium = this.env_initial_material;
+        let pending_thickness = 0;
+        let z = 0;
+        const trace_surfaces = this.surfaces.slice();
+
+        let appended_surface_thickness_override_index = -1;
+        if (options.append_surface) {
+            if (options.append_surface.thickness) {
+                appended_surface_thickness_override_index = trace_surfaces.length - 1;
+            }
+            trace_surfaces.push(options.append_surface);
+        }
+
+        for (let i = 0; i < trace_surfaces.length; i += 1) {
+            const surface = trace_surfaces[i];
+
+            const trace_result = Surface.traceRay3D(obj_pt, ray_dir, pending_medium, surface);
+            const intersection = trace_result[0]; // relative to surface vertex
+            const refract_dir = trace_result[1];
+
+            if (Vector.magnitude(intersection.slice(0, 2)) > surface.aperture_radius) {
+                if (!options.continue_after_ray_miss) {
+                    return null;
+                }
+            }
+
+            if (options.call_after_each_trace) {
+                let context = {
+                    src_pt: Vector.sum(obj_pt, [0,0,z+pending_thickness]),
+                    dest_pt: Vector.sum(intersection, [0,0,z+pending_thickness]),
+                    medium: pending_medium,
+                    refract_dir: refract_dir,
+                };
+                options.call_after_each_trace(context);
+            }
+
+            z += pending_thickness;
+            pending_thickness = surface.thickness;
+            pending_medium = surface.material;
+
+            if (i == appended_surface_thickness_override_index) {
+                pending_thickness = options.append_surface.thickness;
+            }
+
+            obj_pt = Vector.sum(intersection, [0,0,-pending_thickness]);
+            ray_dir = refract_dir;
+        }
+
+        return;
+    }
 }

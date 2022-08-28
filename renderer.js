@@ -34,9 +34,16 @@ class TestRenderer extends Renderer {
         return [points[0], points[points.length-1]];
     }
 
-    paintRayTrace(design, system_width, beam_radius, color, input_angle) {
-        // test ray trace
+    paintRay(src_pt, dest_pt, color) {
         this.c.lineWidth='0.15';
+        this.c.strokeStyle = color;
+        this.c.beginPath();
+        this.c.moveTo(src_pt[0], src_pt[1]);
+        this.c.lineTo(dest_pt[0], dest_pt[1]);
+        this.c.stroke();
+    }
+
+    paintRayTrace(design, system_width, beam_radius, color, input_angle) {
         const initial_radius = beam_radius;
         const backstep = -20;
         let input_slope = Math.tan(input_angle);
@@ -48,50 +55,16 @@ class TestRenderer extends Renderer {
                 ray_o[1] = 0;
                 input_slope = Math.atan(w/Math.abs(backstep));
             }
-            let ray_i = Surface.traceRay2D(ray_o[0], ray_o[1], input_slope, AIR_MATERIAL, design.surfaces[0]);
 
-            this.c.strokeStyle = color;
-            this.c.beginPath();
-            this.c.moveTo(ray_o[0], ray_o[1]);
-            this.c.lineTo(ray_i[0], ray_i[1]);
-            this.c.stroke();
+            let obj_pt = [0, ray_o[1], ray_o[0]];
+            let ray_dir = [0, input_slope, 1];
 
-            let t_off = 0;
-            for (var s = 1; s < design.surfaces.length; s += 1) {
-                t_off += design.surfaces[s-1].thickness;
-                let new_angle = ray_i[2];
-                ray_o = [ray_i[0] - t_off, ray_i[1]];
-                ray_i = Surface.traceRay2D(ray_o[0], ray_o[1], new_angle, design.surfaces[s-1].material, design.surfaces[s]);
-                ray_i[0] += t_off;
-
-                if (false) {
-                    // debug: view extrapolated refraction angle
-                    // vs actual path to intersection point
-                    this.c.strokeStyle = 'pink';
-                    this.c.beginPath();
-                    this.c.moveTo(ray_o[0]+t_off, ray_o[1]);
-                    this.c.lineTo(ray_o[0]+t_off+5, ray_o[1]+5*new_angle);
-                    this.c.stroke();
-                }
-
-                if (s != design.surfaces.length - 1 && Math.abs(ray_i[1]) > design.surfaces[s].aperture_radius) {
-                    break;
-                }
-
-                this.c.strokeStyle = color;
-                this.c.beginPath();
-                this.c.moveTo(ray_o[0]+t_off, ray_o[1]);
-                this.c.lineTo(ray_i[0], ray_i[1]);
-                this.c.stroke();
-
-                if (s == design.surfaces.length - 1) {
-                    this.c.strokeStyle = color;
-                    this.c.beginPath();
-                    this.c.moveTo(ray_i[0], ray_i[1]);
-                    this.c.lineTo(ray_i[0]+system_width*2, ray_i[1]+ray_i[2]*system_width*2);
-                    this.c.stroke();
-                }
-            }
+            design.traceRayThroughSystem(obj_pt, ray_dir, {
+                append_surface: Surface.createBackstop(system_width * 2),
+                call_after_each_trace: (trace) => {
+                    this.paintRay([trace.src_pt[2], trace.src_pt[1]], [trace.dest_pt[2], trace.dest_pt[1]], color);
+                },
+            });
         }
     }
     

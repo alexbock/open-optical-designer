@@ -33,6 +33,13 @@ class Surface {
         return result;
     }
 
+    static createBackstop(thickness) {
+        let result = new Surface();
+        result.thickness = thickness;
+        result.aperture_radius = Infinity;
+        return result;
+    }
+
     static descriptionForConicConstant(k) {
         if (k == 0) { return "spherical"; }
         else if (k > 0) { return "oblate elliptic"; }
@@ -90,7 +97,7 @@ class Surface {
         const cos_t1 = -Vector.dot(normal_unit, ray_unit);
         if (cos_t1 < 0) { throw "wrong sign for surface normal"; }
         const n = nk1.real / nk2.real;
-        const refract_dir = Vector.sum(Vector.product(n, ray_unit), Vector.product(n*cos_t1 - Math.sqrt(1 - n*n * (1 - cos_t1*cos_t1)), normal_unit));
+        const refract_dir = Vector.normalized(Vector.sum(Vector.product(n, ray_unit), Vector.product(n*cos_t1 - Math.sqrt(1 - n*n * (1 - cos_t1*cos_t1)), normal_unit)));
 
         return [intersection, refract_dir];
     }
