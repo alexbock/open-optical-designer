@@ -210,7 +210,7 @@ class TestRenderer extends Renderer {
         this.c.fillStyle = 'white';
         let caption = "f = " + focal_length;
         if (focal_length > 0) {
-            caption += ", \u0192/" + fnumber;
+            caption += ", \u0192/D = " + fnumber;
         }
         this.c.fillText(caption, 10, 25);
     }
