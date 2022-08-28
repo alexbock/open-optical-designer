@@ -129,9 +129,7 @@ class Design {
                     const y = ray_i[1];
                     const m = ray_i[2];
                     const b = y - m*x;
-                    // y = mx + b
-                    // 0 = mx + b
-                    // x = -b/m
+                    // 0 = mx + b, x = -b/m
                     image_distance = -b/m;
                 }
             }

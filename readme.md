@@ -65,9 +65,10 @@ $$ z(y) = \frac{y^2}{R + \sqrt{R^2-(K+1)y^2}} $$
 defined by the radius of curvature $R$ and the conic constant $K$. The intersection of a ray with
 surfaces defined in this manner is implemented using direct evaluation of the exact solutions for
 the intersection of the surface with a parameterized line. The additional even-degree polynomial terms
-(${A_4}y^4 + {A_6}y^6  + {A_8}y^8 + {A_{10}}y^{10}$ etc.) used for more complex aspherical surfaces are not currently supported because a more complex procedure is required to determine ray intersections in the absence of an
-algebraic solution for the parameter of an intersecting line. The `derivations` directory contains artifacts
-from the process of finding these solutions for reference.
+(${A_4}y^4 + {A_6}y^6  + {A_8}y^8 + {A_{10}}y^{10}$ etc.) used for more complex aspherical surfaces are
+not currently supported because a more complex procedure is required to determine ray intersections in
+the absence of an algebraic solution for the parameter of an intersecting line. The `derivations`
+directory contains artifacts from the process of finding these solutions for reference.
 
 ### Units
 
@@ -75,6 +76,19 @@ Design parameters use generic measurement units, but designs generally
 follow a standard such as considering units equivalent to millimeters. Inputs
 and outputs that require specific units (such as the design center wavelength
 in micrometers) are labeled appropriately.
+
+### Importing ".len" Files
+
+The ".len" file import feature imports design surfaces and recognizes the following
+surface parameters:
+
+* Radius of curvature
+* Aperture radius
+* Thickness
+* Material
+* Conic constant
+
+## Development
 
 ### Implemented Using Standard Web Technologies With No External Dependencies
 
