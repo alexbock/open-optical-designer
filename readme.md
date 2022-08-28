@@ -54,7 +54,7 @@ and the design of reflecting telescopes is planned in the future.
 * Material browser
 * Export standard element drawing PDFs for commercial manufacturing
 
-## Design Notes
+## Notes
 
 ### Aspherical Surfaces
 
@@ -68,6 +68,13 @@ the intersection of the surface with a parameterized line. The additional even-d
 (${A_4}y^4 + {A_6}y^6  + {A_8}y^8 + {A_{10}}y^{10}$ etc.) used for more complex aspherical surfaces are not currently supported because a more complex procedure is required to determine ray intersections in the absence of an
 algebraic solution for the parameter of an intersecting line. The `derivations` directory contains artifacts
 from the process of finding these solutions for reference.
+
+### Units
+
+Design parameters use generic measurement units, but designs generally
+follow a standard such as considering units equivalent to millimeters. Inputs
+and outputs that require specific units (such as the design center wavelength
+in micrometers) are labeled appropriately.
 
 ### Implemented Using Standard Web Technologies With No External Dependencies
 

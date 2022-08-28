@@ -174,7 +174,8 @@ class UI {
         cwl_row.appendChild(cwl_label);
         let cwl_input = this.createDOMEnvironmentControlTextInput('center_wavelength');
         cwl_row.appendChild(cwl_input);
-        // TODO label micrometers
+        let cwl_units_label_text = document.createTextNode("\u00A0\u03BCm");
+        cwl_input.appendChild(cwl_units_label_text);
         tbody.appendChild(cwl_row);
 
         let img_radius_row = document.createElement("tr");
