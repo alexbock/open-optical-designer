@@ -17,6 +17,7 @@ and the design of reflecting telescopes is planned in the future.
 * Aspherical surfaces (conic constant)
 * Incoming ray environment control
 * Automatic 2D cross section viewport
+* Geometric point spread function (spot diagram)
 * Material database
 * Paraxial calculation of focal length and f-number
 * Import designs from ".len" files
@@ -24,10 +25,7 @@ and the design of reflecting telescopes is planned in the future.
 
 ## Planned Functionality
 
-* Save/load designs as local files
-* Geometric spot diagram
-* Point spread function simulation
-* Modulation transfer function graph
+* Numerical aperture and effective f-number
 * Report:
     * Axial chromatic aberration
     * Field curvature
@@ -39,19 +37,23 @@ and the design of reflecting telescopes is planned in the future.
     * Optical path difference
     * Optical phase difference
     * Wavefront analysis
-* Numerical aperture and effective f-number
+* Save/load designs as local files
+* Modulation transfer function graph
 * Define surface properties in terms of a formula
+* Autofocus
 * Optimization
 * Anti-reflective coatings
 * Even-degree polynomial terms added to aspherical surfaces
 * Distortion grid simulation
 * Through-the-lens astronomical scene simulation
 * Through-the-lens test chart rendering simulation
+* Through-the-lens simulation of input photograph with optional depth channel
 * High-resolution lens element model export for computer-controlled manufacturing
 * Mirrors (including systems such as catadioptric telescopes)
 * Design generators/wizards (singlet, achromatic doublet, telescope objective, spherical best form lens, etc.)
 * Example designs (achromatic doublet, double Gauss, Cooke triplet, expired camera lens patents, etc.)
 * Material browser
+* Tolerances
 * Export standard element drawing PDFs for commercial manufacturing
 
 ## Notes

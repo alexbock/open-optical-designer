@@ -115,9 +115,20 @@
                     </div>
                 </div>
                 <div id="app-center-pane">
-                    <canvas id="main-canvas" width="800" height="600">
-                        Your browser does not support the &lt;canvas&gt; element.
-                    </canvas>
+                    <div id="center-pane-control-bar">
+                        <!--<div class="flex-expand"></div>-->
+                        <div>
+                            <select id="select-center-view">
+                                <option value="design2d">2D Design</option>
+                                <option value="geo_psf">Point Spread Function</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div id="main-canvas-container">
+                        <canvas id="main-canvas" width="800" height="600">
+                            Your browser does not support the &lt;canvas&gt; element.
+                        </canvas>
+                    </div>
                 </div>
             </div>
         </div>

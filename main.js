@@ -35,6 +35,11 @@ function registerButtons() {
             alert('import failed');
         }
     };
+    let select_center_view = document.getElementById("select-center-view");
+    select_center_view.onchange = () => {
+        app.ui.center_pane_view_mode = select_center_view.options[select_center_view.selectedIndex].value;
+        app.renderer.paint(app.design);
+    };
 }
 
 function main() {
@@ -46,6 +51,7 @@ function main() {
     app.design.surfaces[0].material = app.findMaterial("N-SF11");
     app.design.surfaces[2].material = app.findMaterial("N-BK7");
     app.design.surfaces[4].material = app.findMaterial("N-SF11");
+    app.design.surfaces[app.design.surfaces.length-1].thickness = 35;
     //app.design.addExamplePCXLens(100, 75, app.findMaterial("PMMA"), AIR_MATERIAL);
     //app.design.surfaces[0].conic_constant = -1;
     app.ui.writeDOMSurfaceTable();

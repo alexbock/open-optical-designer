@@ -4,7 +4,7 @@ class Design {
     constructor() {
         this.surfaces = []
         this.center_wavelength = 0.58756;
-        this.env_beam_radius = 1;
+        this.env_beam_radius = 5;
         this.env_fov_angle = 0;
         this.env_beam_cross_distance = 65;
         this.env_image_radius = 21.6
@@ -45,7 +45,7 @@ class Design {
             } else if (lines[i].startsWith("END ")) {
                 break;
             } else {
-                console.log("Ignoring " + lines[i]);
+                //console.log('File import: Ignoring ' + lines[i]);
             }
             i += 1;
         }
@@ -106,6 +106,7 @@ class Design {
         throw "requested index of surface not present in design";
     }
 
+    // TODO refactor to use system trace
     traceMarginalRayToImageDistance(limit) {
         if (!limit) { limit = 1; }
         const initial_radius = this.surfaces[0].aperture_radius / limit;
@@ -138,6 +139,7 @@ class Design {
         return image_distance;
     }
 
+    // TODO refactor to use system trace
     dbg_plotOpticalPathLengthBeforeImagePlane(limit) {
         if (!limit) { limit = this.surfaces[0].aperture_radius / this.env_beam_radius; }
         const initial_radius = this.surfaces[0].aperture_radius / limit;
@@ -277,6 +279,40 @@ class Design {
             ray_dir = refract_dir;
         }
 
-        return;
+        return Vector.sum(obj_pt, [0,0,z]);
+    }
+
+    traceGeometricPointSpreadFunction() {
+        // TODO this currently fires all rays parallel to the optical axis,
+        // but it should eventually support other conditions
+        const input_axis_samples = 100;
+        const image_physical_size = 0.2;
+        const image_buffer_width = 500;
+        let intensity_image = new Array(image_buffer_width**2).fill(0);
+        let max_intensity = 1;
+        for (let y = -this.env_beam_radius; y < this.env_beam_radius; y += this.env_beam_radius * 2 / input_axis_samples) {
+            for (let x = -this.env_beam_radius; x < this.env_beam_radius; x += this.env_beam_radius * 2 / input_axis_samples) {
+                if (x**2 + y**2 > this.env_beam_radius**2) { continue; }
+                const obj_pt = [x, y, -100];
+                const ray_dir = [0, 0, 1];
+                let img_pt = this.traceRayThroughSystem(obj_pt, ray_dir, {
+                    append_surface: Surface.createBackstop(0)
+                });
+                if (img_pt) {
+                    const ix = Math.round((img_pt[0] + image_physical_size/2) / image_physical_size * image_buffer_width);
+                    const iy = Math.round((img_pt[1] + image_physical_size/2) / image_physical_size * image_buffer_width);
+                    if (ix > 0 && ix < image_buffer_width && iy > 0 && iy < image_buffer_width) {
+                        const index = iy * image_buffer_width + ix;
+                        intensity_image[index] += 1;
+                        max_intensity = Math.max(max_intensity, intensity_image[index]);
+                    }
+                }
+            }
+        }
+        for (let i = 0; i < intensity_image.length; i += 1) {
+            //intensity_image[i] /= max_intensity;
+            intensity_image[i] = Math.min(intensity_image[i], 1.0);
+        }
+        return [image_buffer_width, intensity_image];
     }
 }

@@ -77,7 +77,8 @@ class TestRenderer extends Renderer {
         this.c.save();
 
         // TODO controls to configure auto-width:
-        // paraxial focal length, paraxial trace, med trace, marginal trace
+        // paraxial focal length, paraxial trace, med trace, marginal trace,
+        // surfaces only, optical axis crossing only, image only, minimize psf
         //let system_width = (1/design.calculateMeyerArendtSystemMatrix()[1]);
         let system_width = design.traceMarginalRayToImageDistance(10);
         let width_scale = this.canvas.offsetWidth / system_width;
@@ -93,6 +94,7 @@ class TestRenderer extends Renderer {
         this.c.scale(img_scale, img_scale);
         this.c.translate(system_width * 0.10, this.canvas.offsetHeight/2/img_scale);
 
+        // draw surfaces
         this.c.strokeStyle = 'white';
         this.c.lineWidth='0.3';
         let t = 0;
@@ -132,6 +134,7 @@ class TestRenderer extends Renderer {
             last_surface = surface;
         }
 
+        // draw rays
         if (design.env_fov_angle == 0) {
             this.paintRayTrace(design, system_width, app.design.env_beam_radius, 'orange', 0);
         } else {
@@ -141,7 +144,7 @@ class TestRenderer extends Renderer {
             this.paintRayTrace(design, system_width, app.design.env_beam_radius, 'orangered', angle_rad);
         }
 
-        // test draw point at image
+        // draw points at optical axis crossings
         const image_distance_paraxial = app.design.traceMarginalRayToImageDistance(10);
         const image_distance_mid = app.design.traceMarginalRayToImageDistance(2);
         const image_distance_marginal = app.design.traceMarginalRayToImageDistance(1);
@@ -173,7 +176,7 @@ class TestRenderer extends Renderer {
         // debug
         //app.design.dbg_plotOpticalPathLengthBeforeImagePlane();
 
-        // test write system focal length
+        // write system focal length
         let matrix = design.calculateMeyerArendtSystemMatrix();
         let focal_length = 1 / matrix[1];
         let fnumber = focal_length/(design.surfaces[0].aperture_radius*2);
@@ -186,5 +189,34 @@ class TestRenderer extends Renderer {
             caption += ", \u0192/D = " + fnumber;
         }
         this.c.fillText(caption, 10, 25);
+
+        // TODO separate render function
+        // TODO different color for paraxial/mid/marginal rays
+        if (app.ui.center_pane_view_mode == 'geo_psf') {
+            let psf = design.traceGeometricPointSpreadFunction();
+            this.c.fillStyle = bg_color;
+            this.c.fillRect(0, 0, this.canvas.offsetWidth, this.canvas.offsetHeight);
+            this.c.save();
+            const scale = Math.min(this.canvas.offsetWidth, this.canvas.offsetHeight) / psf[0];
+            this.c.translate((this.canvas.offsetWidth / 2 - psf[0] * scale / 2), (this.canvas.offsetHeight / 2 - psf[0] * scale / 2));
+            this.c.scale(scale, scale);
+            for (let y = 0; y < psf[0]; y += 1) {
+                for (let x = 0; x < psf[0]; x += 1) {
+                    const intensity = psf[1][y * psf[0] + x];
+                    if (intensity < 0 || intensity > 1) {
+                        throw "PSF intensity out of range";
+                    }
+                    this.c.fillStyle = "rgb(255,255,255," + Math.min(1, intensity * 1) + ")";
+                    //this.c.beginPath();
+                    //this.c.arc(x*1 , y*1, 1, 0, Math.PI*2);
+                    //this.c.fill();
+                    this.c.fillRect(x, y, 1, 1);
+                }
+            }
+            this.c.restore();
+            this.c.font = '24px sans-serif';
+            this.c.fillStyle = 'white';
+            this.c.fillText("Geometric Point Spread Function", 10, 25);
+        }
     }
 }

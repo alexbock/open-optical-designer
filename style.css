@@ -57,6 +57,12 @@ html, body, #app-container {
     background-color: pink; /*dbg*/
     flex: 1;
     overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+#main-canvas-container {
+    flex: 1;
 }
 
 .section {
@@ -174,6 +180,12 @@ table.edit-table {
 .section-separator {
     border: 2px solid var(--window-bg-secondary-color);
     width: 100%;
+}
+
+#center-pane-control-bar {
+    background-color: var(--cross-section-viewport-bg-color);
+    padding: 0.2em;
+    display: flex;
 }
 
 @media (prefers-color-scheme: dark) {

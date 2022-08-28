@@ -2,7 +2,8 @@
 
 class UI {
     constructor() {
-        this.selectedSurfaceNumber = 1;
+        this.selected_surface_number = 1;
+        this.center_pane_view_mode = 'design2d';
     }
 
     createDOMSurfaceTableTextInput(surface, field, no_select_row) {
@@ -17,7 +18,7 @@ class UI {
         });
         if (!no_select_row) {
             input.addEventListener('focus', (event) => {
-                this.selectedSurfaceNumber = app.design.indexForSurface(surface) + 1;
+                this.selected_surface_number = app.design.indexForSurface(surface) + 1;
                 this.writeDOMSurfaceDetails();
             });
         }
@@ -43,7 +44,7 @@ class UI {
             app.renderer.paint(app.design);
         });
         select.addEventListener('focus', (event) => {
-            this.selectedSurfaceNumber = app.design.indexForSurface(surface) + 1;
+            this.selected_surface_number = app.design.indexForSurface(surface) + 1;
             this.writeDOMSurfaceDetails();
         });
         td.appendChild(select);
@@ -61,12 +62,12 @@ class UI {
             num_col.className = 'surface-table-row-number';
             let num_text = document.createTextNode(n);
             num_col.appendChild(num_text);
-            if (n == this.selectedSurfaceNumber) {
+            if (n == this.selected_surface_number) {
                 // TODO
             } else {
                 const sn = n;
                 num_col.addEventListener('click', (event) => {
-                    this.selectedSurfaceNumber = sn;
+                    this.selected_surface_number = sn;
                     this.writeDOMSurfaceTable();
                 });
             }
@@ -92,7 +93,7 @@ class UI {
     writeDOMSurfaceDetails() {
         let tbody = document.getElementById("surface-detail-table-body");
         tbody.innerHTML = "";
-        let selected_surface = app.design.surfaces[this.selectedSurfaceNumber - 1];
+        let selected_surface = app.design.surfaces[this.selected_surface_number - 1];
         let cc = this.createDOMSurfaceTableTextInput(selected_surface, 'conic_constant', true);
         let row = document.createElement("tr");
         let cc_label = document.createElement("td");
@@ -105,12 +106,12 @@ class UI {
         row.append(cc_kind_label);
         tbody.appendChild(row);
         let surf_num_label = document.getElementById("surface-detail-selected-number");
-        surf_num_label.innerText = this.selectedSurfaceNumber;
+        surf_num_label.innerText = this.selected_surface_number;
         this.updateDOMSurfaceNonInputLabels();
     }
 
     updateDOMSurfaceNonInputLabels() {
-        let selected_surface = app.design.surfaces[this.selectedSurfaceNumber - 1];
+        let selected_surface = app.design.surfaces[this.selected_surface_number - 1];
         let cc_kind = "(" + Surface.descriptionForConicConstant(selected_surface.conic_constant) + ")";
         let shape_label = document.getElementById("surface-detail-cc-shape-name");
         shape_label.innerText = cc_kind;
@@ -119,7 +120,7 @@ class UI {
         for (let num_col of num_cols) {
             num_col.style = "";
         }
-        let num_col = document.getElementById("surface-table-row-" + this.selectedSurfaceNumber);
+        let num_col = document.getElementById("surface-table-row-" + this.selected_surface_number);
         num_col.style = "background-color: var(--window-bg-color);";
     }
 
@@ -189,22 +190,22 @@ class UI {
     }
 
     surfaceTableAddRowAfter() {
-        app.design.surfaces.splice(this.selectedSurfaceNumber, 0, new Surface());
-        this.selectedSurfaceNumber += 1;
+        app.design.surfaces.splice(this.selected_surface_number, 0, new Surface());
+        this.selected_surface_number += 1;
         this.writeDOMSurfaceTable();
         app.renderer.paint(app.design);
     }
 
     surfaceTableAddRowBefore() {
-        app.design.surfaces.splice(this.selectedSurfaceNumber-1, 0, new Surface());
+        app.design.surfaces.splice(this.selected_surface_number-1, 0, new Surface());
         this.writeDOMSurfaceTable();
         app.renderer.paint(app.design);
     }
 
     surfaceTableDeleteRow() {
         if (app.design.surfaces.length > 1) {
-            app.design.surfaces.splice(this.selectedSurfaceNumber-1, 1);
-            this.selectedSurfaceNumber = Math.min(this.selectedSurfaceNumber, app.design.surfaces.length);
+            app.design.surfaces.splice(this.selected_surface_number-1, 1);
+            this.selected_surface_number = Math.min(this.selected_surface_number, app.design.surfaces.length);
         } else {
             app.design.surfaces[0] = new Surface();
         }
