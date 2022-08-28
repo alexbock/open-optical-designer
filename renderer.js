@@ -48,7 +48,7 @@ class TestRenderer extends Renderer {
                 ray_o[1] = 0;
                 input_slope = Math.atan(w/Math.abs(backstep));
             }
-            let ray_i = Surface.traceRay2D(ray_o[0], ray_o[1], input_slope, app.findMaterial("Air"), design.surfaces[0]);
+            let ray_i = Surface.traceRay2D(ray_o[0], ray_o[1], input_slope, AIR_MATERIAL, design.surfaces[0]);
 
             this.c.strokeStyle = color;
             this.c.beginPath();

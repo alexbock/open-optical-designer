@@ -8,6 +8,7 @@ class Design {
         this.env_fov_angle = 0;
         this.env_beam_cross_distance = 65;
         this.env_image_radius = 21.6
+        this.env_initial_material = AIR_MATERIAL;
     }
 
     static async importLenFile(e) {
@@ -28,7 +29,7 @@ class Design {
             if (lines[i].startsWith("GLA ")) {
                 surf.material = app.findMaterial(arg);
             } else if (lines[i].startsWith("AIR ")) {
-                surf.material = app.findMaterial("Air");
+                surf.material = AIR_MATERIAL;
             } else if (lines[i].startsWith("RD ")) {
                 surf.radius_of_curvature = Number.parseFloat(arg);
             } else if (lines[i].startsWith("TH ")) {
@@ -73,7 +74,7 @@ class Design {
     // result[1] is system equivalent power
     calculateMeyerArendtSystemMatrix() {
         let matrices = [];
-        let last_medium = app.findMaterial("Air");
+        let last_medium = AIR_MATERIAL;
         for (let i = 0; i < this.surfaces.length; i += 1) {
             let surface = this.surfaces[i];
             const n1 = last_medium.refractiveIndex(this.center_wavelength);
@@ -111,7 +112,7 @@ class Design {
         let image_distance = 0;
         for (let w = 0; w < 1001; ++w) {
             let ray_o = [-50, w*(initial_radius/1000)];
-            let ray_i = Surface.traceRay2D(ray_o[0], ray_o[1], 0, app.findMaterial("Air"), this.surfaces[0]);
+            let ray_i = Surface.traceRay2D(ray_o[0], ray_o[1], 0, AIR_MATERIAL, this.surfaces[0]);
 
             let t_off = 0;
             for (var s = 1; s < this.surfaces.length; s += 1) {
@@ -144,13 +145,13 @@ class Design {
         for (let w = 0; w < 201; ++w) {
             let opl = 0;
             //let ray_o = [-50, w*(initial_radius/100)];
-            //let ray_i = Surface.traceRay2D(ray_o[0], ray_o[1], 0, app.findMaterial("Air"), this.surfaces[0]);
+            //let ray_i = Surface.traceRay2D(ray_o[0], ray_o[1], 0, AIR_MATERIAL, this.surfaces[0]);
 
             let ray_o = [-1000, 0];
             let slope = Math.atan(((w / 200) * initial_radius) / 1000);
-            let ray_i = Surface.traceRay2D(ray_o[0], ray_o[1], slope, app.findMaterial("Air"), this.surfaces[0]);
+            let ray_i = Surface.traceRay2D(ray_o[0], ray_o[1], slope, AIR_MATERIAL, this.surfaces[0]);
 
-            opl += Vector.magnitude(Vector.sum(Vector.product(-1, ray_o), ray_i.slice(0,2))) * app.findMaterial("Air").refractiveIndex(this.center_wavelength);
+            opl += Vector.magnitude(Vector.sum(Vector.product(-1, ray_o), ray_i.slice(0,2))) * AIR_MATERIAL.refractiveIndex(this.center_wavelength);
 
             let t_off = 0;
             for (var s = 1; s < this.surfaces.length; s += 1) {

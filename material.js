@@ -73,3 +73,6 @@ class Material {
 
 const VACUUM_MATERIAL = new Material("Vacuum", [[0, new Complex(1, 0)]], "", [], "");
 const PERFECT_MIRROR_MATERIAL = new Material("Perfect Mirror", [[0, new Complex(0, 1)]], "", [ "mirror" ], "");
+const AIR_MATERIAL = Material.fromJSON(MATERIAL_DATA[MATERIAL_DATA.findIndex((m) => {
+    return m.name == "Air";
+})]);
