@@ -22,6 +22,7 @@ and the design of reflecting telescopes is planned in the future.
 * Optical path length and phase
 * Axial and transverse chromatic aberration
 * Material database
+* Save/load designs as local JSON files
 * Import designs from ".len" files
 * Light and dark UI color schemes
 
@@ -36,7 +37,6 @@ and the design of reflecting telescopes is planned in the future.
     * Overall surface transmission for unpolarized light
     * Abbe sine condition
     * Wavefront analysis
-* Save/load designs as local files
 * Modulation transfer function graph
 * Define surface properties in terms of a formula
 * Autofocus

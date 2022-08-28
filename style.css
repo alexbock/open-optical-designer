@@ -188,6 +188,15 @@ table.edit-table {
     display: flex;
 }
 
+.top-pane-button {
+    margin-top: 1em;
+    margin-bottom: 1em;
+    margin-right: 1em;
+    padding: 0.3em;
+    background-color: var(--table-bg-color);
+    border-radius: 3px;
+}
+
 @media (prefers-color-scheme: dark) {
     :root {
         --window-bg-color: #222222;

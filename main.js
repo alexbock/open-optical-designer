@@ -20,14 +20,57 @@ class App {
 
 let app = new App();
 
+function saveJSONFile() {
+    let json = JSON.stringify(app.design, (k, v) => {
+        if (v instanceof Material) {
+            return v.name;
+        } else if (v == Infinity) {
+            return "<INFINITY>";
+        } else {
+            return v;
+        }
+    });
+    let file = new Blob([json], {type: "text/json"});
+    let a = document.createElement("a");
+    let url = URL.createObjectURL(file);
+    a.href = url;
+    a.download = "lens-design.json";
+    a.click();
+    URL.revokeObjectURL(url);
+}
+
+async function loadJSONFile(e) {
+    let file = e.target.files[0];
+    if (!file) { return null; }
+    let text = await file.text();
+    let json = JSON.parse(text, (k, v) => {
+        if (typeof k == 'string') {
+            if (k == "material" || k.endsWith("_material")) {
+                return app.findMaterial(v);
+            } else if ((k == "radius_of_curvature" && v == null) || v == "<INFINITY>") {
+                return Infinity;
+            } else if (k == "surfaces" && Array.isArray(v)) {
+                return v.map(x => {
+                    return Object.assign(new Surface(), x);
+                });
+            }
+        }
+        return v;
+    });
+    return json;
+}
+
 function registerButtons() {
     document.getElementById("surface-table-add-after-button").onclick = () => { app.ui.surfaceTableAddRowAfter(); };
     document.getElementById("surface-table-add-before-button").onclick = () => { app.ui.surfaceTableAddRowBefore(); };
     document.getElementById("surface-table-delete-button").onclick = () => { app.ui.surfaceTableDeleteRow(); };
+
     document.getElementById("btn-import-len-file").onchange = async (e) => {
         let result = await Design.importLenFile(e);
         if (result) {
             app.design = result;
+            app.ui.selected_surface_number = 1;
+            app.ui.center_pane_view_mode = 'design2d';
             app.ui.writeDOMSurfaceTable();
             app.ui.writeDOMEnvironmentControl();
             app.renderer.paint(app.design);
@@ -35,6 +78,20 @@ function registerButtons() {
             alert('import failed');
         }
     };
+    document.getElementById("btn-save-json-file").onclick = () => {
+        saveJSONFile();
+    };
+    document.getElementById("btn-load-json-file").onchange = async (e) => {
+        let json = await loadJSONFile(e);
+        app.design = new Design();
+        Object.assign(app.design, json);
+        app.ui.selected_surface_number = 1;
+        app.ui.center_pane_view_mode = 'design2d';
+        app.ui.writeDOMSurfaceTable();
+        app.ui.writeDOMEnvironmentControl();
+        app.renderer.paint(app.design);
+    };
+
     let select_center_view = document.getElementById("select-center-view");
     select_center_view.onchange = () => {
         app.ui.center_pane_view_mode = select_center_view.options[select_center_view.selectedIndex].value;
