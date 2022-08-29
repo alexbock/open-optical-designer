@@ -5,7 +5,7 @@ class Surface {
         this.radius_of_curvature = Infinity;
         this.aperture_radius = 0;
         this.thickness = 0;
-        this.material = VACUUM_MATERIAL;
+        this.material = AIR_MATERIAL;
 
         this.conic_constant = 0;
     }
