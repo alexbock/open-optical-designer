@@ -122,7 +122,7 @@ function loadMaterialData() {
 
 function recreateMainCanvas() {
     let canvas = document.getElementById("main-canvas");
-    app.renderer = new TestRenderer(canvas);
+    app.renderer = new CenterCanvasRenderer(canvas);
     app.renderer.paint(app.design);
 }
 

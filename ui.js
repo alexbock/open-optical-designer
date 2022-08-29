@@ -6,11 +6,14 @@ class UI {
         this.center_pane_view_mode = 'design2d';
     }
 
-    createDOMSurfaceTableTextInput(surface, field, no_select_row) {
+    createDOMSurfaceTableTextInput(surface, field, no_select_row, input_id) {
         let td = document.createElement("td");
         let input = document.createElement("input");
         input.type = "text";
         input.value = surface[field];
+        if (input_id) {
+            input.id = input_id;
+        }
         input.addEventListener('change', (event) => {
             surface[field] = Number.parseFloat(input.value);
             this.updateDOMSurfaceNonInputLabels();
@@ -20,6 +23,7 @@ class UI {
             input.addEventListener('focus', (event) => {
                 this.selected_surface_number = app.design.indexForSurface(surface) + 1;
                 this.writeDOMSurfaceDetails();
+                app.renderer.paint(app.design);
             });
         }
         td.appendChild(input);
@@ -63,22 +67,27 @@ class UI {
             let num_text = document.createTextNode(n);
             num_col.appendChild(num_text);
             if (n == this.selected_surface_number) {
-                // TODO
+                // pass
             } else {
                 const sn = n;
                 num_col.addEventListener('click', (event) => {
                     this.selected_surface_number = sn;
                     this.writeDOMSurfaceTable();
+                    app.renderer.paint(app.design);
                 });
             }
             row.appendChild(num_col);
             n += 1;
 
+            let last_thickness_id = null;
+            if (surface === app.design.surfaces[app.design.surfaces.length-1]) {
+                last_thickness_id = "last-thickness";
+            }
             let roc = this.createDOMSurfaceTableTextInput(surface, 'radius_of_curvature');
             row.appendChild(roc);
             let apr = this.createDOMSurfaceTableTextInput(surface, 'aperture_radius');
             row.appendChild(apr);
-            let th = this.createDOMSurfaceTableTextInput(surface, 'thickness');
+            let th = this.createDOMSurfaceTableTextInput(surface, 'thickness', false, last_thickness_id);
             row.append(th);
 
            let mat = this.createDOMSurfaceTableMaterialSelect(surface);
@@ -122,6 +131,8 @@ class UI {
         }
         let num_col = document.getElementById("surface-table-row-" + this.selected_surface_number);
         num_col.style = "background-color: var(--window-bg-color);";
+
+        app.design.autofocus();
     }
 
     createDOMEnvironmentControlTextInput(field) {
@@ -196,6 +207,35 @@ class UI {
         let img_radius_input = this.createDOMEnvironmentControlTextInput('env_image_radius');
         img_radius_row.appendChild(img_radius_input);
         tbody.appendChild(img_radius_row);
+
+        let last_surface_autofocus_choices = [
+            ["off", "Off"],
+            //["paraxial_matrix", "Paraxial Matrix"],
+            ["paraxial_ray", "Paraxial Ray"],
+            ["marginal_ray", "Marginal Ray"],
+        ];
+        let last_surface_autofocus_row = document.createElement("tr");
+        let last_surface_autofocus_label = document.createElement("td");
+        let last_surface_autofocus_label_text = document.createTextNode("Last Surface Autofocus");
+        last_surface_autofocus_label.appendChild(last_surface_autofocus_label_text);
+        last_surface_autofocus_row.appendChild(last_surface_autofocus_label);
+        let last_surface_autofocus_select_td = document.createElement("td");
+        let last_surface_autofocus_select = document.createElement("select");
+        for (let choice of last_surface_autofocus_choices) {
+            let opt = document.createElement("option");
+            opt.value = choice[0];
+            let opt_text = document.createTextNode(choice[1]);
+            opt.appendChild(opt_text);
+            last_surface_autofocus_select.appendChild(opt);
+        }
+        last_surface_autofocus_select.addEventListener('change', (event) => {
+            app.design.env_last_surface_autofocus = last_surface_autofocus_select.options[last_surface_autofocus_select.selectedIndex].value;
+            app.design.autofocus();
+            app.renderer.paint(app.design);
+        });
+        last_surface_autofocus_select_td.appendChild(last_surface_autofocus_select);
+        last_surface_autofocus_row.appendChild(last_surface_autofocus_select_td);
+        tbody.appendChild(last_surface_autofocus_row);
     }
 
     surfaceTableAddRowAfter() {

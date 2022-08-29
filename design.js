@@ -12,6 +12,7 @@ class Design {
         this.env_beam_cross_distance = 65;
         this.env_image_radius = 21.6
         this.env_initial_material = AIR_MATERIAL;
+        this.env_last_surface_autofocus = "off";
     }
 
     static async importLenFile(e) {
@@ -214,14 +215,21 @@ class Design {
         return d;
     }
 
-    dbg_autofocus() {
-        const limit = this.surfaces[0].aperture_radius / this.env_beam_radius;
-        const img_dist = this.traceMarginalRayToImageDistance(limit);
+    autofocus() {
+        const af = this.env_last_surface_autofocus;
+        if (af == "off") { return; }
+        let img_dist = undefined;
+        if (af == "paraxial_matrix") {
+            img_dist = 1/this.calculateMeyerArendtSystemMatrix()[1];
+        } else if (af == "marginal_ray" || af == "paraxial_ray") {
+            let limit = this.surfaces[0].aperture_radius / this.env_beam_radius;
+            if (af == "paraxial_ray") { limit *= 10; }
+            img_dist = this.traceMarginalRayToImageDistance(limit);
+        }
         const si = this.surfaces.length - 1;
         const offset = this.distanceToVertexForSurface(si);
         this.surfaces[si].thickness = img_dist - offset;
-        app.ui.writeDOMSurfaceTable();
-        app.renderer.paint(app.design);
+        document.getElementById("last-thickness").value = app.design.surfaces[app.design.surfaces.length-1].thickness;
     }
 
     // traces rays from an object point through all surfaces

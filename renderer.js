@@ -21,8 +21,8 @@ class Renderer {
     }
 }
 
-class TestRenderer extends Renderer {
-    testDrawSurface(surf, offset) {
+class CenterCanvasRenderer extends Renderer {
+    drawSurface(surf, offset) {
         const points = surf.generateVisualOutlinePointList();
         if (points.length == 0) { return; }
         this.c.beginPath();
@@ -103,8 +103,14 @@ class TestRenderer extends Renderer {
         let t = 0;
         let last_edges = null;
         let last_surface = null;
+        let i = 1;
         for (let surface of design.surfaces) {
-            let edges = this.testDrawSurface(surface, t);
+            if (i == app.ui.selected_surface_number) {
+                this.c.setLineDash([1, 0.5]);
+            }
+            let edges = this.drawSurface(surface, t);
+            this.c.setLineDash([]);
+
             if (edges && last_edges && last_surface) {
                 if (last_surface.material.name != 'Air' && last_surface.material.name != 'Vacuum') {
                     // draw edges
@@ -135,6 +141,7 @@ class TestRenderer extends Renderer {
             t += surface.thickness;
             last_edges = edges;
             last_surface = surface;
+            i += 1;
         }
 
         // draw rays
