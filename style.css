@@ -224,4 +224,8 @@ table.edit-table {
     .surface-table-controls-button-remove:hover {
         background-color: darkred;
     }
+
+    .top-pane-button {
+        background-color: var(--window-bg-color);
+    }
 }

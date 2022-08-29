@@ -70,7 +70,6 @@ function registerButtons() {
         if (result) {
             app.design = result;
             app.ui.selected_surface_number = 1;
-            app.ui.center_pane_view_mode = 'design2d';
             app.ui.writeDOMSurfaceTable();
             app.ui.writeDOMEnvironmentControl();
             app.renderer.paint(app.design);
@@ -86,7 +85,6 @@ function registerButtons() {
         app.design = new Design();
         Object.assign(app.design, json);
         app.ui.selected_surface_number = 1;
-        app.ui.center_pane_view_mode = 'design2d';
         app.ui.writeDOMSurfaceTable();
         app.ui.writeDOMEnvironmentControl();
         app.renderer.paint(app.design);

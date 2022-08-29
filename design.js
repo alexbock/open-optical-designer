@@ -7,6 +7,7 @@ class Design {
         this.short_wavelength = 0.440;
         this.long_wavelength = 0.620;
         this.env_beam_radius = 5;
+        this.env_rays_per_beam = 5;
         this.env_fov_angle = 0;
         this.env_beam_cross_distance = 65;
         this.env_image_radius = 21.6

@@ -159,6 +159,15 @@ class UI {
         beam_fov_row.appendChild(beam_fov_input);
         tbody.appendChild(beam_fov_row);
 
+        let beam_rays_row = document.createElement("tr");
+        let beam_rays_label = document.createElement("td");
+        let beam_rays_label_text = document.createTextNode("Rays per Beam");
+        beam_rays_label.appendChild(beam_rays_label_text);
+        beam_rays_row.appendChild(beam_rays_label);
+        let beam_rays_input = this.createDOMEnvironmentControlTextInput('env_rays_per_beam');
+        beam_rays_row.appendChild(beam_rays_input);
+        tbody.appendChild(beam_rays_row);
+
         let beam_cross_dist_row = document.createElement("tr");
         let beam_cross_dist_label = document.createElement("td");
         let beam_cross_dist_label_text = document.createTextNode("Aperture Distance");

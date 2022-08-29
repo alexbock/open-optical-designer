@@ -48,9 +48,12 @@ class TestRenderer extends Renderer {
         const backstep = -20;
         let input_slope = Math.tan(input_angle);
         let height_offset = input_slope * (backstep-app.design.env_beam_cross_distance);
+        const first = -beam_radius;
+        const last = beam_radius;
 
-        for (let w = 0; w < initial_radius+0.5; w += 0.25) {
-            let ray_o = [backstep, -initial_radius + w*(initial_radius*2/(initial_radius)) + height_offset];
+        for (let i = 0; i < app.design.env_rays_per_beam; i += 1) {
+            let ray_o = [backstep, (i / (app.design.env_rays_per_beam-1)) * (last - first) + first + height_offset];
+            if (app.design.env_rays_per_beam == 1) { ray_o[1] = height_offset; }
             if (false) { // TODO option
                 ray_o[1] = 0;
                 input_slope = Math.atan(w/Math.abs(backstep));
@@ -214,6 +217,8 @@ class TestRenderer extends Renderer {
             this.c.font = '24px sans-serif';
             this.c.fillStyle = 'white';
             this.c.fillText("Geometric Point Spread Function", 10, 25);
+            this.c.font = '14px sans-serif';
+            this.c.fillText("(on-axis parallel beam, viewport size is 0.2 units on image plane)", 10, 25 + 24);
         }
 
         // TODO clean up layout and scaling
