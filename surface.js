@@ -28,6 +28,24 @@ class Surface {
                 reflected_points.push([x, -y]);
             }
         }
+
+        let self = app.design.indexForSurface(this);
+        let surfaces = app.design.surfaces;
+        // adjust uneven height
+        let element_radius = this.aperture_radius;
+        for (let i = self; i < surfaces.length; i += 1) {
+            element_radius = Math.max(surfaces[i].aperture_radius, element_radius);
+            if (surfaces[i].material.name == "Air") { break; }
+        }
+        for (let i = self-1; i >= 0; i -= 1) {
+            if (surfaces[i].material.name == "Air") { break; }
+            element_radius = Math.max(surfaces[i].aperture_radius, element_radius);
+        }
+        if (element_radius > this.aperture_radius) {
+            points.push([this.sag(this.aperture_radius), element_radius]);
+            reflected_points.push([this.sag(this.aperture_radius), -element_radius]);
+        }
+
         reflected_points.reverse();
         let result = reflected_points.concat(points);
         return result;

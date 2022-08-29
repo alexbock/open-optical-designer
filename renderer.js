@@ -75,7 +75,7 @@ class TestRenderer extends Renderer {
         let bg_color = getComputedStyle(document.body).getPropertyValue("--cross-section-viewport-bg-color");
 
         this.c.fillStyle = bg_color;
-        this.c.fillRect(0, 0, this.canvas.offsetWidth, this.canvas.offsetHeight);
+        this.c.fillRect(0, 0, this.canvas.offsetWidth+10, this.canvas.offsetHeight);
     
         this.c.save();
 
@@ -195,7 +195,7 @@ class TestRenderer extends Renderer {
         if (app.ui.center_pane_view_mode == 'geo_psf') {
             let psf = design.traceGeometricPointSpreadFunction();
             this.c.fillStyle = bg_color;
-            this.c.fillRect(0, 0, this.canvas.offsetWidth, this.canvas.offsetHeight);
+            this.c.fillRect(0, 0, this.canvas.offsetWidth+10, this.canvas.offsetHeight);
             this.c.save();
             const scale = Math.min(this.canvas.offsetWidth, this.canvas.offsetHeight) / psf[0];
             this.c.translate((this.canvas.offsetWidth / 2 - psf[0] * scale / 2), (this.canvas.offsetHeight / 2 - psf[0] * scale / 2));
@@ -224,7 +224,7 @@ class TestRenderer extends Renderer {
         // TODO clean up layout and scaling
         if (app.ui.center_pane_view_mode == 'opl') {
             this.c.fillStyle = bg_color;
-            this.c.fillRect(0, 0, this.canvas.offsetWidth, this.canvas.offsetHeight);
+            this.c.fillRect(0, 0, this.canvas.offsetWidth+10, this.canvas.offsetHeight);
             this.c.save();
             this.c.translate(0, this.canvas.offsetHeight/2);
             this.c.scale(1,-1);
@@ -245,7 +245,7 @@ class TestRenderer extends Renderer {
             let result = app.design.calculateChromaticAberration();
 
             this.c.fillStyle = bg_color;
-            this.c.fillRect(0, 0, this.canvas.offsetWidth, this.canvas.offsetHeight);
+            this.c.fillRect(0, 0, this.canvas.offsetWidth+10, this.canvas.offsetHeight);
             this.c.font = '24px sans-serif';
             this.c.fillStyle = 'white';
 
