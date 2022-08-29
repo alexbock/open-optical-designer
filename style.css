@@ -33,12 +33,14 @@ html, body, #app-container {
     display: flex;
     flex-direction: column;
     background-color: red; /*dbg*/
+    min-height: 0;
 }
 
 #app-main-row {
     display: flex;
     flex: 1;
     background-color: yellow; /*dbg*/
+    min-height: 0;
 }
 
 #app-top-pane {
@@ -51,6 +53,7 @@ html, body, #app-container {
     flex-direction: column;
     background-color: var(--window-bg-color);
     border-right: 4px solid var(--window-bg-secondary-color);
+    overflow-y: scroll;
 }
 
 #app-center-pane {
