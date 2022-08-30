@@ -145,6 +145,10 @@ class CenterCanvasRenderer extends Renderer {
             this.paintRayTrace(design, system_width, app.design.env_beam_radius, 'darkmagenta', 0);
             this.paintRayTrace(design, system_width, app.design.env_beam_radius, 'gold', angle_rad * 0.5);
             this.paintRayTrace(design, system_width, app.design.env_beam_radius, 'orangered', angle_rad);
+            if (design.env_sym_beams) {
+                this.paintRayTrace(design, system_width, app.design.env_beam_radius, 'green', -angle_rad * 0.5);
+                this.paintRayTrace(design, system_width, app.design.env_beam_radius, 'salmon', -angle_rad);
+            }
         }
 
         // draw points at optical axis crossings

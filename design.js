@@ -9,6 +9,7 @@ class Design {
         this.env_beam_radius = 5;
         this.env_rays_per_beam = 5;
         this.env_fov_angle = 0;
+        this.env_sym_beams = false;
         this.env_beam_cross_distance = 65;
         this.env_image_radius = 21.6
         this.env_initial_material = AIR_MATERIAL;

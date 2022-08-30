@@ -179,6 +179,24 @@ class UI {
         beam_rays_row.appendChild(beam_rays_input);
         tbody.appendChild(beam_rays_row);
 
+        let sym_beams_row = document.createElement("tr");
+        let sym_beams_label = document.createElement("td");
+        let sym_beams_label_text = document.createTextNode("Mirror Angled Beams");
+        sym_beams_label.appendChild(sym_beams_label_text);
+        sym_beams_row.appendChild(sym_beams_label);
+        let sym_beams_input_td = document.createElement("td");
+        let sym_beams_input_check = document.createElement("input");
+        sym_beams_input_check.type = "checkbox";
+        sym_beams_input_check.style = "margin-left: 2.5em;";
+        sym_beams_input_check.checked = app.design.env_sym_beams;
+        sym_beams_input_check.addEventListener('change', (event) => {
+            app.design.env_sym_beams = sym_beams_input_check.checked;
+            app.renderer.paint(app.design);
+        });
+        sym_beams_input_td.appendChild(sym_beams_input_check);
+        sym_beams_row.appendChild(sym_beams_input_td);
+        tbody.appendChild(sym_beams_row);
+
         let beam_cross_dist_row = document.createElement("tr");
         let beam_cross_dist_label = document.createElement("td");
         let beam_cross_dist_label_text = document.createTextNode("Aperture Distance");
