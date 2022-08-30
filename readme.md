@@ -18,7 +18,8 @@ and the design of reflecting telescopes is planned in the future.
 * Incoming ray environment control
 * Automatic 2D cross section viewport
 * Geometric point spread function (spot diagram)
-* Paraxial calculation of focal length and f-number
+* Display of focal length, effective f-number, and numerical aperture
+* Autofocus
 * Optical path length and phase
 * Axial and transverse chromatic aberration
 * Material database
@@ -28,7 +29,6 @@ and the design of reflecting telescopes is planned in the future.
 
 ## Planned Functionality
 
-* Numerical aperture and effective f-number
 * Report:
     * Field curvature
     * Spherical aberration
@@ -37,12 +37,9 @@ and the design of reflecting telescopes is planned in the future.
     * Overall surface transmission for unpolarized light
     * Abbe sine condition
     * Wavefront analysis
+* Optimization
 * Modulation transfer function graph
 * Define surface properties in terms of a formula
-* Autofocus
-* Optimization
-* Anti-reflective coatings
-* Even-degree polynomial terms added to aspherical surfaces
 * Distortion grid simulation
 * Through-the-lens astronomical scene simulation
 * Through-the-lens test chart rendering simulation
@@ -52,6 +49,11 @@ and the design of reflecting telescopes is planned in the future.
 * Design generators/wizards (singlet, achromatic doublet, telescope objective, spherical best form lens, etc.)
 * Example designs (achromatic doublet, double Gauss, Cooke triplet, expired camera lens patents, etc.)
 * Material browser
+
+## Potential Future Considerations
+
+* Even-degree polynomial terms added to aspherical surfaces
+* Anti-reflective coatings
 * Tolerances
 * Export standard element drawing PDFs for commercial manufacturing
 
