@@ -331,7 +331,7 @@ class Design {
                     append_surface: Surface.createBackstop(0)
                 });
                 if (result) {
-                    img_pt = result[0];
+                    let img_pt = result[0];
                     const ix = Math.round((img_pt[0] + image_physical_size/2) / image_physical_size * image_buffer_width);
                     const iy = Math.round((img_pt[1] + image_physical_size/2) / image_physical_size * image_buffer_width);
                     if (ix > 0 && ix < image_buffer_width && iy > 0 && iy < image_buffer_width) {
@@ -444,8 +444,8 @@ class Design {
         }
     }
 
-    calculateNumericalAperture() {
-        const aperture = this.surfaces[0].aperture_radius;
+    calculateNumericalAperture(limit_to_beam_radius) {
+        const aperture = limit_to_beam_radius ? this.env_beam_radius : this.surfaces[0].aperture_radius;
         let min = 0;
         let max = aperture;
         const ray_dir = [0,0,1];

@@ -182,14 +182,15 @@ class CenterCanvasRenderer extends Renderer {
         let fnumber = focal_length/(design.surfaces[0].aperture_radius*2);
         focal_length = Math.round(focal_length * 100) / 100;
         fnumber = Math.round(fnumber * 100) / 100;
-        let na = design.calculateNumericalAperture();
+        let na_limited = design.calculateNumericalAperture(true);
+        let na_free = design.calculateNumericalAperture(false);
         this.c.font = '24px sans-serif';
         this.c.fillStyle = 'white';
         let caption = "f = " + focal_length;
         if (focal_length > 0) {
-            caption += ", \u0192/" + Math.round(1/(2*na) * 100) / 100;
+            caption += ", \u0192/" + Math.round(1/(2*na_limited) * 100) / 100;
             caption += " (\u0192/D = " + fnumber + ")";
-            caption += ", NA = " + Math.round(na * 100) / 100;
+            caption += ", NA = " + Math.round(na_free * 100) / 100;
         }
         this.c.fillText(caption, 10, 25);
 
