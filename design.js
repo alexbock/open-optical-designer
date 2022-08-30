@@ -276,6 +276,10 @@ class Design {
             const surface = trace_surfaces[i];
 
             const trace_result = Surface.traceRay3D(obj_pt, ray_dir, pending_medium, surface, wavelength);
+            if (Number.isNaN(trace_result[1][0])) {
+                // total internal reflection
+                return null;
+            }
             const intersection = trace_result[0]; // relative to surface vertex
             const refract_dir = trace_result[1];
 
@@ -438,5 +442,24 @@ class Design {
         } else {
             return null;
         }
+    }
+
+    calculateNumericalAperture() {
+        const aperture = this.surfaces[0].aperture_radius;
+        let min = 0;
+        let max = aperture;
+        const ray_dir = [0,0,1];
+        while (Math.abs(max - min) > aperture / 100) {
+            let h = max / 2 + min / 2;
+            let obj_pt = [0,h,-20];
+            let result = this.traceRayThroughSystem(obj_pt, ray_dir);
+            if (result) {
+                min = h;
+            } else {
+                max = h;
+            }
+        }
+        let effective_diameter = min + max; // conceptually (min / 2 + max / 2) * 2;
+        return effective_diameter / (2 * 1 / this.calculateMeyerArendtSystemMatrix()[1]);
     }
 }

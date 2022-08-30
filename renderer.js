@@ -68,7 +68,7 @@ class CenterCanvasRenderer extends Renderer {
         let bg_color = getComputedStyle(document.body).getPropertyValue("--cross-section-viewport-bg-color");
 
         this.c.fillStyle = bg_color;
-        this.c.fillRect(0, 0, this.canvas.offsetWidth+10, this.canvas.offsetHeight);
+        this.c.fillRect(0, 0, this.canvas.offsetWidth+10, this.canvas.offsetHeight+10);
     
         this.c.save();
 
@@ -182,11 +182,14 @@ class CenterCanvasRenderer extends Renderer {
         let fnumber = focal_length/(design.surfaces[0].aperture_radius*2);
         focal_length = Math.round(focal_length * 100) / 100;
         fnumber = Math.round(fnumber * 100) / 100;
+        let na = design.calculateNumericalAperture();
         this.c.font = '24px sans-serif';
         this.c.fillStyle = 'white';
         let caption = "f = " + focal_length;
         if (focal_length > 0) {
-            caption += ", \u0192/D = " + fnumber;
+            caption += ", \u0192/" + Math.round(1/(2*na) * 100) / 100;
+            caption += " (\u0192/D = " + fnumber + ")";
+            caption += ", NA = " + Math.round(na * 100) / 100;
         }
         this.c.fillText(caption, 10, 25);
 
@@ -195,7 +198,7 @@ class CenterCanvasRenderer extends Renderer {
         if (app.ui.center_pane_view_mode == 'geo_psf') {
             let psf = design.traceGeometricPointSpreadFunction();
             this.c.fillStyle = bg_color;
-            this.c.fillRect(0, 0, this.canvas.offsetWidth+10, this.canvas.offsetHeight);
+            this.c.fillRect(0, 0, this.canvas.offsetWidth+10, this.canvas.offsetHeight+10);
             this.c.save();
             const scale = Math.min(this.canvas.offsetWidth, this.canvas.offsetHeight) / psf[0];
             this.c.translate((this.canvas.offsetWidth / 2 - psf[0] * scale / 2), (this.canvas.offsetHeight / 2 - psf[0] * scale / 2));
@@ -224,7 +227,7 @@ class CenterCanvasRenderer extends Renderer {
         // TODO clean up layout and scaling
         if (app.ui.center_pane_view_mode == 'opl') {
             this.c.fillStyle = bg_color;
-            this.c.fillRect(0, 0, this.canvas.offsetWidth+10, this.canvas.offsetHeight);
+            this.c.fillRect(0, 0, this.canvas.offsetWidth+10, this.canvas.offsetHeight+10);
             this.c.save();
             this.c.translate(0, this.canvas.offsetHeight/2);
             this.c.scale(1,-1);
@@ -245,7 +248,7 @@ class CenterCanvasRenderer extends Renderer {
             let result = app.design.calculateChromaticAberration();
 
             this.c.fillStyle = bg_color;
-            this.c.fillRect(0, 0, this.canvas.offsetWidth+10, this.canvas.offsetHeight);
+            this.c.fillRect(0, 0, this.canvas.offsetWidth+10, this.canvas.offsetHeight+10);
             this.c.font = '24px sans-serif';
             this.c.fillStyle = 'white';
 

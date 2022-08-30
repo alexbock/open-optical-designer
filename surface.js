@@ -116,7 +116,9 @@ class Surface {
         const cos_t1 = -Vector.dot(normal_unit, ray_unit);
         if (cos_t1 < 0) { throw "wrong sign for surface normal"; }
         const n = nk1.real / nk2.real;
-        const refract_dir = Vector.normalized(Vector.sum(Vector.product(n, ray_unit), Vector.product(n*cos_t1 - Math.sqrt(1 - n*n * (1 - cos_t1*cos_t1)), normal_unit)));
+        const radicand = 1 - n*n * (1 - cos_t1*cos_t1);
+        // note: radicand < 0 indicates total internal reflection and refract_dir values will be NaN
+        const refract_dir = Vector.normalized(Vector.sum(Vector.product(n, ray_unit), Vector.product(n*cos_t1 - Math.sqrt(radicand), normal_unit)));
 
         return [intersection, refract_dir];
     }
