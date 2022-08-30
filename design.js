@@ -229,7 +229,7 @@ class Design {
         const si = this.surfaces.length - 1;
         const offset = this.distanceToVertexForSurface(si);
         this.surfaces[si].thickness = img_dist - offset;
-        document.getElementById("last-thickness").value = app.design.surfaces[app.design.surfaces.length-1].thickness;
+        document.getElementById("last-thickness").value = this.surfaces[this.surfaces.length-1].thickness;
     }
 
     // traces rays from an object point through all surfaces
@@ -307,7 +307,7 @@ class Design {
             ray_dir = refract_dir;
         }
 
-        return Vector.sum(obj_pt, [0,0,z]);
+        return [Vector.sum(obj_pt, [0,0,z]), ray_dir];
     }
 
     traceGeometricPointSpreadFunction() {
@@ -323,10 +323,11 @@ class Design {
                 if (x**2 + y**2 > this.env_beam_radius**2) { continue; }
                 const obj_pt = [x, y, -100];
                 const ray_dir = [0, 0, 1];
-                let img_pt = this.traceRayThroughSystem(obj_pt, ray_dir, {
+                let result = this.traceRayThroughSystem(obj_pt, ray_dir, {
                     append_surface: Surface.createBackstop(0)
                 });
-                if (img_pt) {
+                if (result) {
+                    img_pt = result[0];
                     const ix = Math.round((img_pt[0] + image_physical_size/2) / image_physical_size * image_buffer_width);
                     const iy = Math.round((img_pt[1] + image_physical_size/2) / image_physical_size * image_buffer_width);
                     if (ix > 0 && ix < image_buffer_width && iy > 0 && iy < image_buffer_width) {
@@ -361,7 +362,7 @@ class Design {
                 wavelength: w
             });
             if (!result) { return null; }
-            let img_plane_pt = [result[0], result[1]];
+            let img_plane_pt = [result[0][0], result[0][1]];
             img_plane_pts.push(img_plane_pt);
         }
         let transverse_differences = [];
@@ -374,5 +375,68 @@ class Design {
         }
 
         return [axial_differences, transverse_differences];
+    }
+
+    // note: check functions to ensure that they do not unexpectedly
+    // use app.design when you intend to operate on the reverse design
+    createReverseSystem() {
+        let reverse = new Design();
+        Object.assign(reverse, this);
+
+        reverse.surfaces = reverse.surfaces.slice();
+        let last_material = AIR_MATERIAL;
+        let last_thickness = 0;
+        for (let i = 0; i < reverse.surfaces.length; i += 1) {
+            let surf = new Surface();
+            Object.assign(surf, reverse.surfaces[i]);
+            reverse.surfaces[i] = surf;
+
+            let this_material = surf.material;
+            surf.material = last_material;
+            last_material = this_material;
+
+            let this_thickness = surf.thickness;
+            surf.thickness = last_thickness;
+            last_thickness = this_thickness;
+
+            surf.radius_of_curvature *= -1;
+        }
+        reverse.surfaces.reverse();
+
+        reverse.env_beam_cross_distance = this.distanceToVertexForSurface(this.surfaces.length-1) - this.env_beam_cross_distance;
+
+        return reverse;
+    }
+
+    // find a ray entering the first surface with
+    // the desired angle from the center of the
+    // aperture that crosses the optical axis at
+    // the aperture (TODO entrance pupil)
+    reverseTraceFindChiefRayEntrance(desired_angle) {
+        let rd = this.createReverseSystem();
+
+        let rear_surfaces = 0;
+        let rear_thickness = 0;
+        for (let surf of rd.surfaces) {
+            if (rear_thickness >= rd.env_beam_cross_distance) { break; }
+            rear_surfaces += 1;
+            rear_thickness += surf.thickness;
+        }
+        rd.surfaces.splice(0, rear_surfaces);
+        rd.env_beam_cross_distance -= rear_thickness;
+
+        let vim_pt = [0,0,rd.env_beam_cross_distance];
+        let vim_ray_dir = [0, Math.tan(desired_angle), 1];
+        let result = rd.traceRayThroughSystem(vim_pt, vim_ray_dir);
+        if (result) {
+            let pt = result[0];
+            let ray = result[1];
+            pt[2] -= rd.distanceToVertexForSurface(rd.surfaces.length-1);
+            pt[2] *= -1;
+            ray[1] *= -1;
+            return [pt, ray];
+        } else {
+            return null;
+        }
     }
 }

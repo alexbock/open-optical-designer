@@ -44,23 +44,16 @@ class CenterCanvasRenderer extends Renderer {
     }
 
     paintRayTrace(design, system_width, beam_radius, color, input_angle) {
-        const initial_radius = beam_radius;
-        const backstep = -20;
-        let input_slope = Math.tan(input_angle);
-        let height_offset = input_slope * (backstep-app.design.env_beam_cross_distance);
-        const first = -beam_radius;
-        const last = beam_radius;
-
+        let entrance = design.reverseTraceFindChiefRayEntrance(input_angle);
+        if (!entrance) { return; }
         for (let i = 0; i < app.design.env_rays_per_beam; i += 1) {
-            let ray_o = [backstep, (i / (app.design.env_rays_per_beam-1)) * (last - first) + first + height_offset];
-            if (app.design.env_rays_per_beam == 1) { ray_o[1] = height_offset; }
-            if (false) { // TODO option
-                ray_o[1] = 0;
-                input_slope = Math.atan(w/Math.abs(backstep));
-            }
+            let obj_pt = Vector.sum(entrance[0], Vector.product(entrance[1], -system_width));
+            let ray_dir = entrance[1];
 
-            let obj_pt = [0, ray_o[1], ray_o[0]];
-            let ray_dir = [0, input_slope, 1];
+            if (app.design.env_rays_per_beam > 1) {
+                let cross_dir_2d = Vector.normalized([0, ray_dir[2], -ray_dir[1]]);
+                obj_pt = Vector.sum(obj_pt, Vector.product(cross_dir_2d, beam_radius * 2 * i/(app.design.env_rays_per_beam-1) - (beam_radius)));
+            }
 
             design.traceRayThroughSystem(obj_pt, ray_dir, {
                 append_surface: Surface.createBackstop(system_width * 2),
