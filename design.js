@@ -316,35 +316,58 @@ class Design {
     }
 
     traceGeometricPointSpreadFunction() {
-        // TODO this currently fires all rays parallel to the optical axis,
-        // but it should eventually support other conditions
         const input_axis_samples = 100;
         const image_physical_size = 0.2;
         const image_buffer_width = 500;
         let intensity_image = new Array(image_buffer_width**2).fill(0);
         let max_intensity = 1;
-        for (let y = -this.env_beam_radius; y < this.env_beam_radius; y += this.env_beam_radius * 2 / input_axis_samples) {
-            for (let x = -this.env_beam_radius; x < this.env_beam_radius; x += this.env_beam_radius * 2 / input_axis_samples) {
-                if (x**2 + y**2 > this.env_beam_radius**2) { continue; }
-                const obj_pt = [x, y, -100];
-                const ray_dir = [0, 0, 1];
-                let result = this.traceRayThroughSystem(obj_pt, ray_dir, {
+
+        // TODO: for angled beams on a fisheye, the parallel rays are
+        // being copied and shifted on X without changing angle, but
+        // this is not effective when such lenses only admit rays
+        // nearly parallel to the surface normal
+        let rays = this.enumerateInputRaysForBeam(this.env_fov_angle * (2 * Math.PI / 360), this.env_beam_radius, input_axis_samples, 100);
+        let results = [];
+        for (let ray of rays) {
+            for (let x = -this.env_beam_radius; x < this.env_beam_radius; x += (2 * this.env_beam_radius / input_axis_samples)) {
+                if (x**2 + ray[0][1]**2 > this.env_beam_radius**2) {
+                    continue;
+                }
+
+                let img_pt = ray[0];
+                img_pt[0] = x;
+                let ray_dir = ray[1];
+
+                let result = this.traceRayThroughSystem(img_pt, ray_dir, {
                     append_surface: Surface.createBackstop(0)
                 });
                 if (result) {
-                    let img_pt = result[0];
-                    const ix = Math.round((img_pt[0] + image_physical_size/2) / image_physical_size * image_buffer_width);
-                    const iy = Math.round((img_pt[1] + image_physical_size/2) / image_physical_size * image_buffer_width);
-                    if (ix > 0 && ix < image_buffer_width && iy > 0 && iy < image_buffer_width) {
-                        const index = iy * image_buffer_width + ix;
-                        intensity_image[index] += 1;
-                        max_intensity = Math.max(max_intensity, intensity_image[index]);
-                    }
+                    results.push(result);
                 }
             }
         }
+
+        let cr = this.enumerateInputRaysForBeam(this.env_fov_angle * (2 * Math.PI / 360), this.env_beam_radius, 1, 100);
+        let cr_result = this.traceRayThroughSystem(cr[0][0], cr[0][1], {
+            append_surface: Surface.createBackstop(0)
+        });
+        if (cr_result) {
+            for (let result of results) {
+                result[0][1] -= cr_result[0][1];
+            }
+        }
+
+        for (let result of results) {
+            let img_pt = result[0];
+            const ix = Math.round((img_pt[0] + image_physical_size/2) / image_physical_size * image_buffer_width);
+            const iy = Math.round((img_pt[1] + image_physical_size/2) / image_physical_size * image_buffer_width);
+            if (ix > 0 && ix < image_buffer_width && iy > 0 && iy < image_buffer_width) {
+                const index = iy * image_buffer_width + ix;
+                intensity_image[index] += 1;
+                max_intensity = Math.max(max_intensity, intensity_image[index]);
+            }
+        }
         for (let i = 0; i < intensity_image.length; i += 1) {
-            //intensity_image[i] /= max_intensity;
             intensity_image[i] = Math.min(intensity_image[i], 1.0);
         }
         return [image_buffer_width, intensity_image];
@@ -462,5 +485,23 @@ class Design {
         }
         let effective_diameter = min + max; // conceptually (min / 2 + max / 2) * 2;
         return effective_diameter / (2 * 1 / this.calculateMeyerArendtSystemMatrix()[1]);
+    }
+
+    enumerateInputRaysForBeam(input_angle, beam_radius, ray_count, rear_offset) {
+        let entrance = this.reverseTraceFindChiefRayEntrance(input_angle);
+        let rays = [];
+        if (!entrance) { return []; }
+        for (let i = 0; i < ray_count; i += 1) {
+            let obj_pt = Vector.sum(entrance[0], Vector.product(entrance[1], -rear_offset));
+            let ray_dir = entrance[1];
+
+            if (ray_count > 1) {
+                let cross_dir_2d = Vector.normalized([0, ray_dir[2], -ray_dir[1]]);
+                obj_pt = Vector.sum(obj_pt, Vector.product(cross_dir_2d, beam_radius * 2 * i/(ray_count-1) - (beam_radius)));
+            }
+
+            rays.push([obj_pt, ray_dir]);
+        }
+        return rays;
     }
 }

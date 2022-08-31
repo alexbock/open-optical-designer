@@ -53,6 +53,7 @@ html, body, #app-container {
     flex-direction: column;
     background-color: var(--window-bg-color);
     border-right: 4px solid var(--window-bg-secondary-color);
+    overflow-x: hidden;
     overflow-y: scroll;
 }
 

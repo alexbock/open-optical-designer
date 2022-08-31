@@ -44,17 +44,10 @@ class CenterCanvasRenderer extends Renderer {
     }
 
     paintRayTrace(design, system_width, beam_radius, color, input_angle) {
-        let entrance = design.reverseTraceFindChiefRayEntrance(input_angle);
-        if (!entrance) { return; }
-        for (let i = 0; i < app.design.env_rays_per_beam; i += 1) {
-            let obj_pt = Vector.sum(entrance[0], Vector.product(entrance[1], -system_width));
-            let ray_dir = entrance[1];
-
-            if (app.design.env_rays_per_beam > 1) {
-                let cross_dir_2d = Vector.normalized([0, ray_dir[2], -ray_dir[1]]);
-                obj_pt = Vector.sum(obj_pt, Vector.product(cross_dir_2d, beam_radius * 2 * i/(app.design.env_rays_per_beam-1) - (beam_radius)));
-            }
-
+        let rays = design.enumerateInputRaysForBeam(input_angle, beam_radius, app.design.env_rays_per_beam, system_width);
+        for (let ray of rays) {
+            const obj_pt = ray[0];
+            const ray_dir = ray[1];
             design.traceRayThroughSystem(obj_pt, ray_dir, {
                 append_surface: Surface.createBackstop(system_width * 2),
                 call_after_each_trace: (trace) => {
@@ -226,7 +219,7 @@ class CenterCanvasRenderer extends Renderer {
             this.c.fillStyle = 'white';
             this.c.fillText("Geometric Point Spread Function", 10, 25);
             this.c.font = '14px sans-serif';
-            this.c.fillText("(on-axis parallel beam, viewport size is 0.2 units on image plane)", 10, 25 + 24);
+            this.c.fillText("(parallel beam controlled by beam radius and angle, viewport size is 0.2 units on image plane)", 10, 25 + 24);
         }
 
         // TODO clean up layout and scaling
