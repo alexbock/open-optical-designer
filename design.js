@@ -315,8 +315,8 @@ class Design {
         return [Vector.sum(obj_pt, [0,0,z]), ray_dir];
     }
 
-    traceGeometricPointSpreadFunction() {
-        const input_axis_samples = 100;
+    traceGeometricPointSpreadFunction(angle, additive) {
+        const input_axis_samples = 75;
         const image_physical_size = 0.2;
         const image_buffer_width = 500;
         let intensity_image = new Array(image_buffer_width**2).fill(0);
@@ -326,7 +326,7 @@ class Design {
         // being copied and shifted on X without changing angle, but
         // this is not effective when such lenses only admit rays
         // nearly parallel to the surface normal
-        let rays = this.enumerateInputRaysForBeam(this.env_fov_angle * (2 * Math.PI / 360), this.env_beam_radius, input_axis_samples, 100);
+        let rays = this.enumerateInputRaysForBeam(angle * (2 * Math.PI / 360), this.env_beam_radius, input_axis_samples, 100);
         let results = [];
         for (let ray of rays) {
             for (let x = -this.env_beam_radius; x < this.env_beam_radius; x += (2 * this.env_beam_radius / input_axis_samples)) {
@@ -347,7 +347,7 @@ class Design {
             }
         }
 
-        let cr = this.enumerateInputRaysForBeam(this.env_fov_angle * (2 * Math.PI / 360), this.env_beam_radius, 1, 100);
+        let cr = this.enumerateInputRaysForBeam(angle * (2 * Math.PI / 360), this.env_beam_radius, 1, 100);
         let cr_result = this.traceRayThroughSystem(cr[0][0], cr[0][1], {
             append_surface: Surface.createBackstop(0)
         });
@@ -368,7 +368,11 @@ class Design {
             }
         }
         for (let i = 0; i < intensity_image.length; i += 1) {
-            intensity_image[i] = Math.min(intensity_image[i], 1.0);
+            if (additive) {
+                intensity_image[i] /= max_intensity;
+            } else {
+                intensity_image[i] = Math.min(intensity_image[i], 1.0);
+            }
         }
         return [image_buffer_width, intensity_image];
     }

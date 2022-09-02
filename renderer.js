@@ -56,6 +56,30 @@ class CenterCanvasRenderer extends Renderer {
             });
         }
     }
+
+    paintGeometricPointSpreadFunction(design, angle, grid_pos, additive) {
+        this.c.save();
+        let psf = design.traceGeometricPointSpreadFunction(angle, additive);
+        const voffset = 60;
+        const h = this.canvas.offsetHeight - voffset;
+        const scale = Math.min(this.canvas.offsetWidth / 2, h / 2) / psf[0];
+        this.c.translate((this.canvas.offsetWidth / 4 - psf[0] * scale / 2 + grid_pos[0] * this.canvas.offsetWidth / 2), (h / 4 - psf[0] * scale / 2 + grid_pos[1] * h / 2 + voffset));
+        this.c.scale(scale, scale);
+        for (let y = 0; y < psf[0]; y += 1) {
+            for (let x = 0; x < psf[0]; x += 1) {
+                const intensity = psf[1][y * psf[0] + x];
+                if (intensity < 0 || intensity > 1) {
+                    throw "PSF intensity out of range";
+                }
+                this.c.fillStyle = "rgb(255,255,255," + Math.min(1, intensity * 1) + ")";
+                //this.c.beginPath();
+                //this.c.arc(x*1 , y*1, 1, 0, Math.PI*2);
+                //this.c.fill();
+                this.c.fillRect(x, y, 1, 1);
+            }
+        }
+        this.c.restore();
+    }
     
     paint(design) {
         let bg_color = getComputedStyle(document.body).getPropertyValue("--cross-section-viewport-bg-color");
@@ -191,35 +215,21 @@ class CenterCanvasRenderer extends Renderer {
         }
         this.c.fillText(caption, 10, 25);
 
-        // TODO separate render function
-        // TODO different color for paraxial/mid/marginal rays
+        // TODO different color for paraxial/mid/marginal rays?
         if (app.ui.center_pane_view_mode == 'geo_psf') {
-            let psf = design.traceGeometricPointSpreadFunction();
             this.c.fillStyle = bg_color;
             this.c.fillRect(0, 0, this.canvas.offsetWidth+10, this.canvas.offsetHeight+10);
             this.c.save();
-            const scale = Math.min(this.canvas.offsetWidth, this.canvas.offsetHeight) / psf[0];
-            this.c.translate((this.canvas.offsetWidth / 2 - psf[0] * scale / 2), (this.canvas.offsetHeight / 2 - psf[0] * scale / 2));
-            this.c.scale(scale, scale);
-            for (let y = 0; y < psf[0]; y += 1) {
-                for (let x = 0; x < psf[0]; x += 1) {
-                    const intensity = psf[1][y * psf[0] + x];
-                    if (intensity < 0 || intensity > 1) {
-                        throw "PSF intensity out of range";
-                    }
-                    this.c.fillStyle = "rgb(255,255,255," + Math.min(1, intensity * 1) + ")";
-                    //this.c.beginPath();
-                    //this.c.arc(x*1 , y*1, 1, 0, Math.PI*2);
-                    //this.c.fill();
-                    this.c.fillRect(x, y, 1, 1);
-                }
-            }
+            this.paintGeometricPointSpreadFunction(design, 0, [0, 1]);
+            this.paintGeometricPointSpreadFunction(design, 0, [1, 1], true);
+            this.paintGeometricPointSpreadFunction(design, design.env_fov_angle / 2, [1, 0]);
+            this.paintGeometricPointSpreadFunction(design, design.env_fov_angle, [0, 0]);
             this.c.restore();
             this.c.font = '24px sans-serif';
             this.c.fillStyle = 'white';
             this.c.fillText("Geometric Point Spread Function", 10, 25);
             this.c.font = '14px sans-serif';
-            this.c.fillText("(parallel beam controlled by beam radius and angle, viewport size is 0.2 units on image plane)", 10, 25 + 24);
+            this.c.fillText("parallel beam, 0.2 unit image plane viewport - full field angle spot, half field angle spot, center spot, center PSF)", 10, 25 + 24);
         }
 
         // TODO clean up layout and scaling
