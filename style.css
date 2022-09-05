@@ -201,6 +201,14 @@ table.edit-table {
     border-radius: 3px;
 }
 
+#top-pane-title {
+    margin-top: 0.2em;
+    margin-bottom: 0.2em;
+    margin-left: 1em;
+    padding: 0.3em;
+    font-size: 150%;
+}
+
 @media (prefers-color-scheme: dark) {
     :root {
         --window-bg-color: #222222;
