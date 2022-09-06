@@ -209,6 +209,12 @@ table.edit-table {
     font-size: 150%;
 }
 
+#top-pane-title a {
+    text-decoration: none;
+    color: black;
+    cursor: pointer;
+}
+
 @media (prefers-color-scheme: dark) {
     :root {
         --window-bg-color: #222222;
@@ -239,5 +245,9 @@ table.edit-table {
 
     .top-pane-button {
         background-color: var(--window-bg-color);
+    }
+
+    #top-pane-title a {
+        color: white;
     }
 }
