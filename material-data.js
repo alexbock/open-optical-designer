@@ -75,6 +75,20 @@ const MATERIAL_DATA = [
         ]
     },
     {
+        "name": "F2",
+        "tags": ["glass", "schott"],
+        "reference": "SCHOTT",
+        "refractive_index": [
+            [0.400, 1.6522, 1.9243e-8],
+            [0.450, 1.6388, 9.2023e-9],
+            [0.500, 1.6299, 4.7818e-9],
+            [0.550, 1.6237, 3.5049e-9],
+            [0.600, 1.6190, 3.8236e-9],
+            [0.650, 1.6154, 5.7217e-9],
+            [0.700, 1.6126, 4.4608e-9]
+        ]
+    },
+    {
         "name": "Fused Silica",
         "description": "Quartz",
         "tags": [ "glass" ],
@@ -94,7 +108,7 @@ const MATERIAL_DATA = [
         ]
     },
     {
-        "name": "CaF2",
+        "name": "Fluorite",
         "reference": "Malitson 1963",
         "refractive_index": [
             [0.240, 1.4712],
