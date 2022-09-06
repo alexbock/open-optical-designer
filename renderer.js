@@ -282,5 +282,59 @@ class CenterCanvasRenderer extends Renderer {
                 this.c.fillText("Beam radius is out of bounds", 10, 25);
             }
         }
+
+        if (app.ui.center_pane_view_mode == "ray_aberration") {
+            this.c.fillStyle = bg_color;
+            this.c.fillRect(0, 0, this.canvas.offsetWidth+10, this.canvas.offsetHeight+10);
+            const vw = this.canvas.offsetWidth - 20;
+            const vh = this.canvas.offsetHeight - 20;
+            this.paintRayAberrationGraph(design, 0, 10, 0, vw / 2, vh / 2);
+            this.paintRayAberrationGraph(design, design.env_fov_angle / 2, 10 + vw / 2, 0, vw / 2, vh / 2);
+            this.paintRayAberrationGraph(design, design.env_fov_angle, 10, 0 + vh / 2, vw / 2, vh / 2);
+        }
+    }
+
+    paintRayAberrationGraph(design, angle, x, y, w, h) {
+        let result = design.calculateRayAberrations(angle * (2 * Math.PI / 360));
+
+        this.c.lineWidth = 1;
+        this.c.strokeStyle = 'white';
+        this.c.strokeRect(x, y, w, h);
+        x += 2;
+        y += 2;
+        w -= 4;
+        h -= 4;
+
+        this.c.fillStyle = 'white';
+        let max_aperture = 0;
+        let max_image = 0;
+        let min_image = Infinity;
+        for (let aperture_and_image of result) {
+            min_image = Math.min(min_image, aperture_and_image[1]);
+        }
+        for (let aperture_and_image of result) {
+            aperture_and_image[1] -= min_image;
+        }
+        for (let aperture_and_image of result) {
+            max_aperture = Math.max(max_aperture, Math.abs(aperture_and_image[0]));
+            max_image = Math.max(max_image, aperture_and_image[1]);
+        }
+        for (let aperture_and_image of result) {
+            this.c.beginPath();
+            const sc_x = w / (max_aperture*2);
+            const pt_x = x + aperture_and_image[0] * sc_x + w / 2;
+            const sc_y = h / max_image;
+            const pt_y = y + aperture_and_image[1] * sc_y + h / 2 - (max_image * sc_y)/2;
+            this.c.arc(pt_x, pt_y, 2, 0, Math.PI*2);
+            this.c.fill();
+        }
+
+        this.c.font = '24px monospace';
+        this.c.fillStyle = 'white';
+        this.c.strokeStyle = 'black';
+        let measure_aperture = this.c.measureText(angle + "\u00B0");
+        this.c.lineWidth = 5;
+        this.c.strokeText(angle + "\u00B0", x + w/2 - measure_aperture.width/2, y + h - measure_aperture.actualBoundingBoxAscent/2);
+        this.c.fillText(angle + "\u00B0", x + w/2 - measure_aperture.width/2, y + h - measure_aperture.actualBoundingBoxAscent/2);
     }
 }

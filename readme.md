@@ -4,9 +4,9 @@ Alexander Bock
 
 ## Introduction
 
-This is an early work-in-progress web application for
+This is a work-in-progress web application for
 designing optical lenses consisting of sequential lens elements.
-It is initially intended to support practical design of, for
+It is intended to support practical design of, for
 example, a large aperture double Gauss lens for a full frame camera with
 effective control of image aberrations. Support for mirrors
 and the design of reflecting telescopes is planned in the future.
@@ -22,32 +22,27 @@ and the design of reflecting telescopes is planned in the future.
 * Autofocus
 * Optical path length and phase
 * Axial and transverse chromatic aberration
+* Transverse ray aberration
 * Material database
 * Save/load designs as local JSON files
 * Import designs from ".len" files
 * Light and dark UI color schemes
 
-## Planned Functionality
+## Future Plans
 
-* Report:
-    * Field curvature
-    * Spherical aberration
-    * Coma
-    * Distortion
-    * Overall surface transmission for unpolarized light
-    * Abbe sine condition
-    * Wavefront analysis
 * Optimization
+* Overall surface transmission for unpolarized light
+* Field curvature
+* Distortion
+* Abbe sine condition
+* Wavefront analysis
 * Modulation transfer function graph
 * Define surface properties in terms of a formula
-* Distortion grid simulation
-* Through-the-lens astronomical scene simulation
-* Through-the-lens test chart rendering simulation
-* Through-the-lens simulation of input photograph with optional depth channel
-* High-resolution lens element model export for computer-controlled manufacturing
+* Through-the-lens scene simulation (test chart, astronomical, custom photo with optional depth map)
+* Integrate high-resolution lens element model export for computer-controlled manufacturing (currently a separate program written in C++)
 * Mirrors (including systems such as catadioptric telescopes)
 * Design generators/wizards (singlet, achromatic doublet, telescope objective, spherical best form lens, etc.)
-* Example designs (achromatic doublet, double Gauss, Cooke triplet, expired camera lens patents, etc.)
+* Example designs (achromatic doublet, double Gauss, Cooke triplet, historical lenses, etc.)
 * Material browser
 
 ## Potential Future Considerations
@@ -79,6 +74,14 @@ Design parameters use generic measurement units, but designs generally
 follow a standard such as considering units equivalent to millimeters. Inputs
 and outputs that require specific units (such as the design center wavelength
 in micrometers) are labeled appropriately.
+
+### Saving and Loading Files
+
+The "Save JSON File" button will download the current lens design as a JSON file.
+Depending on your browser settings, this may prompt for a location and name to save
+the file or immediately save the file in your downloads directory with the default name (lens-design.json).
+The "Load JSON File" button can be used to load a lens design that was previously saved
+to a local file. JSON project files contain both the lens design and the environment settings.
 
 ### Importing ".len" Files
 

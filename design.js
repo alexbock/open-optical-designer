@@ -508,4 +508,37 @@ class Design {
         }
         return rays;
     }
+
+    calculateRayAberrations(angle) {
+        // measure where chief ray falls on image plane and
+        // return an array for each ray of height at aperture
+        // crossing and difference in height on image plane
+        // compared to chief ray
+        let rays = this.enumerateInputRaysForBeam(angle, this.env_beam_radius, 200, 100);
+        let aperture_vs_image = [];
+        for (let ray of rays) {
+            let aperture_height = undefined;
+            let result = this.traceRayThroughSystem(ray[0], ray[1], {
+                append_surface: Surface.createBackstop(0),
+                call_after_each_trace: (trace) => {
+                    if (trace.src_pt[2] < this.env_beam_cross_distance) {
+                        if (trace.dest_pt[2] >= this.env_beam_cross_distance) {
+                            const slope = (trace.dest_pt[1] - trace.src_pt[1]) / (trace.dest_pt[2] - trace.src_pt[2]);
+                            aperture_height = trace.src_pt[1] + slope * (this.env_beam_cross_distance - trace.src_pt[2]);
+                        }
+                    }
+                }
+            });
+            if (result && aperture_height !== undefined) {
+                aperture_vs_image.push([aperture_height, result[0][1]]);
+            }
+        }
+        if (aperture_vs_image.length > 0) {
+            const chief_image_height = aperture_vs_image[0][1];
+            for (let aperture_vs_image_datum of aperture_vs_image) {
+                aperture_vs_image_datum[1] -= chief_image_height;
+            }
+        }
+        return aperture_vs_image;
+    }
 }
