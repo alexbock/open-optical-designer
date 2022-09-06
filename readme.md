@@ -2,6 +2,8 @@
 
 Alexander Bock
 
+[Launch Open Optical Designer](https://alexbock.github.io/open-optical-designer/)
+
 ![Open Optical Designer Screenshot 2](screenshot2.png)
 ![Open Optical Designer Screenshot 1](screenshot1.png)
 
@@ -65,8 +67,11 @@ $$ z(y) = \frac{y^2}{R + \sqrt{R^2-(K+1)y^2}} $$
 
 defined by the radius of curvature $R$ and the conic constant $K$. The intersection of a ray with
 surfaces defined in this manner is implemented using direct evaluation of the exact solutions for
-the intersection of the surface with a parameterized line. The additional even-degree polynomial terms
-(${A_4}y^4 + {A_6}y^6  + {A_8}y^8 + {A_{10}}y^{10}$ etc.) used for more complex aspherical surfaces are
+the intersection of the surface with a parameterized line. The additional even-degree polynomial terms:
+
+$$ {A_4}y^4 + {A_6}y^6  + {A_8}y^8 + {A_{10}}y^{10} + \cdots{} $$
+
+ used for more complex aspherical surfaces are
 not currently supported because a more complex procedure is required to determine ray intersections in
 the absence of an algebraic solution for the parameter of an intersecting line. The `derivations`
 directory contains artifacts from the process of finding these solutions for reference.
