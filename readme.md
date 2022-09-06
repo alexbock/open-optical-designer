@@ -107,3 +107,11 @@ It is written in plain, modern JavaScript as a single page application
 using standard HTML and CSS with no build, preprocessing, generation, or
 transformation steps. It can be run directly in the browser locally
 without a web server if desired.
+
+## Copyright
+
+See COPYRIGHT.txt.
+
+## License
+
+See LICENSE.txt.
