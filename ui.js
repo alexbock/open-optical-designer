@@ -242,6 +242,9 @@ class UI {
         for (let choice of last_surface_autofocus_choices) {
             let opt = document.createElement("option");
             opt.value = choice[0];
+            if (opt.value == app.design.env_last_surface_autofocus) {
+                opt.selected = true;
+            }
             let opt_text = document.createTextNode(choice[1]);
             opt.appendChild(opt_text);
             last_surface_autofocus_select.appendChild(opt);

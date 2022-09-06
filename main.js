@@ -39,10 +39,7 @@ function saveJSONFile() {
     URL.revokeObjectURL(url);
 }
 
-async function loadJSONFile(e) {
-    let file = e.target.files[0];
-    if (!file) { return null; }
-    let text = await file.text();
+function parseJSONFile(text) {
     let json = JSON.parse(text, (k, v) => {
         if (typeof k == 'string') {
             if (k == "material" || k.endsWith("_material")) {
@@ -58,6 +55,13 @@ async function loadJSONFile(e) {
         return v;
     });
     return json;
+}
+
+async function loadJSONFile(e) {
+    let file = e.target.files[0];
+    if (!file) { return null; }
+    let text = await file.text();
+    return parseJSONFile(text);
 }
 
 function registerButtons() {
@@ -95,20 +99,25 @@ function registerButtons() {
         app.ui.center_pane_view_mode = select_center_view.options[select_center_view.selectedIndex].value;
         app.renderer.paint(app.design);
     };
+
+    document.getElementById("btn-new").onclick = () => {
+        app.design = new Design();
+        app.design.addExamplePCXLens(75, 40, app.findMaterial("N-BK7"), AIR_MATERIAL);
+        app.design.env_last_surface_autofocus = "marginal_ray";
+        app.design.env_beam_radius = 10;
+        app.ui.selected_surface_number = 1;
+        app.ui.writeDOMSurfaceTable();
+        app.ui.writeDOMEnvironmentControl();
+        app.renderer.paint(app.design);
+    };
 }
 
 function main() {
     registerButtons();
     loadMaterialData();
-    app.design.addExamplePCXLens(200, 75, app.findMaterial("PMMA"), AIR_MATERIAL);
-    app.design.addExamplePCXLens(70, 55, app.findMaterial("PMMA"), AIR_MATERIAL);
-    app.design.addExamplePCXLens(-100, 40, app.findMaterial("PMMA"), AIR_MATERIAL);
-    app.design.surfaces[0].material = app.findMaterial("N-SF11");
-    app.design.surfaces[2].material = app.findMaterial("N-BK7");
-    app.design.surfaces[4].material = app.findMaterial("N-SF11");
-    app.design.surfaces[app.design.surfaces.length-1].thickness = 35;
-    //app.design.addExamplePCXLens(100, 75, app.findMaterial("PMMA"), AIR_MATERIAL);
-    //app.design.surfaces[0].conic_constant = -1;
+
+    Object.assign(app.design, parseJSONFile(DEFAULT_SAMPLE_LENS_JSON));
+
     app.ui.writeDOMSurfaceTable();
     app.ui.writeDOMEnvironmentControl();
     recreateMainCanvas();
