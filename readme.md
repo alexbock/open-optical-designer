@@ -2,6 +2,9 @@
 
 Alexander Bock
 
+![Open Optical Designer Screenshot 2](screenshot2.png)
+![Open Optical Designer Screenshot 1](screenshot1.png)
+
 ## Introduction
 
 This is a work-in-progress web application for
