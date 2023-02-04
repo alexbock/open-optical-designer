@@ -201,6 +201,10 @@ table.edit-table {
     border-radius: 3px;
 }
 
+.top-pane-button:hover {
+    background-color: var(--window-bg-color);
+}
+
 #top-pane-title {
     margin-top: 0.2em;
     margin-bottom: 0.2em;
@@ -249,5 +253,9 @@ table.edit-table {
 
     #top-pane-title a {
         color: white;
+    }
+
+    .top-pane-button:hover {
+        background-color: black;
     }
 }
