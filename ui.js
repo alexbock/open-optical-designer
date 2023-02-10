@@ -16,6 +16,16 @@ class UI {
         }
         input.addEventListener('change', (event) => {
             surface[field] = Number.parseFloat(input.value);
+            if (field == 'aperture_radius') {
+                if (surface[field] < 0) {
+                    surface[field] *= -1;
+                    input.value = surface[field];
+                }
+                if (!isFinite(surface[field])) {
+                    surface[field] = 0;
+                    input.value = surface[field];
+                }
+            }
             this.updateDOMSurfaceNonInputLabels();
             app.renderer.paint(app.design);
         });
