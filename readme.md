@@ -4,8 +4,8 @@ Alexander Bock
 
 [Launch Open Optical Designer](https://alexbock.github.io/open-optical-designer/)
 
-![Open Optical Designer Screenshot 2](screenshot2.png)
-![Open Optical Designer Screenshot 1](screenshot1.png)
+![Open Optical Designer Screenshot 2](screenshots/screenshot2.png)
+![Open Optical Designer Screenshot 1](screenshots/screenshot1.png)
 
 ## Introduction
 
