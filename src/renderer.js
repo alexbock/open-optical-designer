@@ -210,7 +210,7 @@ class CenterCanvasRenderer extends Renderer {
         let caption = "f = " + focal_length;
         if (focal_length > 0) {
             caption += ", \u0192/" + Math.round(1/(2*na_limited) * 100) / 100;
-            caption += " (\u0192/D = " + fnumber + ")";
+            caption += " (f/D = " + fnumber + ")";
             caption += ", NA = " + Math.round(na_free * 100) / 100;
         }
         this.c.fillText(caption, 10, 25);
