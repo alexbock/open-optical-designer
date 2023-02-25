@@ -83,6 +83,7 @@ class CenterCanvasRenderer extends Renderer {
     
     paint(design) {
         let bg_color = getComputedStyle(document.body).getPropertyValue("--cross-section-viewport-bg-color");
+        let is_dark_mode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
 
         this.c.fillStyle = bg_color;
         this.c.fillRect(0, 0, this.canvas.offsetWidth+10, this.canvas.offsetHeight+10);
@@ -159,7 +160,7 @@ class CenterCanvasRenderer extends Renderer {
             this.paintRayTrace(design, system_width, app.design.env_beam_radius, 'orange', 0);
         } else {
             let angle_rad = 2 * Math.PI / 360 * design.env_fov_angle;
-            this.paintRayTrace(design, system_width, app.design.env_beam_radius, 'darkmagenta', 0);
+            this.paintRayTrace(design, system_width, app.design.env_beam_radius, (is_dark_mode ? '' : 'dark') + 'magenta', 0);
             this.paintRayTrace(design, system_width, app.design.env_beam_radius, 'gold', angle_rad * 0.5);
             this.paintRayTrace(design, system_width, app.design.env_beam_radius, 'orangered', angle_rad);
             if (design.env_sym_beams) {
