@@ -14,6 +14,7 @@ class Design {
         this.env_image_radius = 21.6
         this.env_initial_material = AIR_MATERIAL;
         this.env_last_surface_autofocus = "off";
+        this.env_marginal_vs_paraxial_focus_dots = true;
     }
 
     static async importLenFile(e) {

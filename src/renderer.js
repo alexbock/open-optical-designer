@@ -170,19 +170,21 @@ class CenterCanvasRenderer extends Renderer {
         }
 
         // draw points at optical axis crossings
-        const image_distance_paraxial = app.design.traceMarginalRayToImageDistance(10);
-        const image_distance_mid = app.design.traceMarginalRayToImageDistance(2);
-        const image_distance_marginal = app.design.traceMarginalRayToImageDistance(1);
-        this.c.fillStyle = 'black';
-        this.c.beginPath();
-        this.c.arc(image_distance_paraxial, 0, 0.3, 0, 2*Math.PI);
-        this.c.fill();
-        this.c.beginPath();
-        this.c.arc(image_distance_marginal, 0, 0.3, 0, 2*Math.PI);
-        this.c.fill();
-        this.c.beginPath();
-        this.c.arc(image_distance_mid, 0, 0.3, 0, 2*Math.PI);
-        this.c.fill();
+        if (app.design.env_marginal_vs_paraxial_focus_dots) {
+            const image_distance_paraxial = app.design.traceMarginalRayToImageDistance(10);
+            const image_distance_mid = app.design.traceMarginalRayToImageDistance(2);
+            const image_distance_marginal = app.design.traceMarginalRayToImageDistance(1);
+            this.c.fillStyle = 'black';
+            this.c.beginPath();
+            this.c.arc(image_distance_paraxial, 0, 0.3, 0, 2*Math.PI);
+            this.c.fill();
+            this.c.beginPath();
+            this.c.arc(image_distance_marginal, 0, 0.3, 0, 2*Math.PI);
+            this.c.fill();
+            this.c.beginPath();
+            this.c.arc(image_distance_mid, 0, 0.3, 0, 2*Math.PI);
+            this.c.fill();
+        }
         
         // draw image plane
         let user_image_distance = 0;

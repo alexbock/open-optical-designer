@@ -267,6 +267,24 @@ class UI {
         last_surface_autofocus_select_td.appendChild(last_surface_autofocus_select);
         last_surface_autofocus_row.appendChild(last_surface_autofocus_select_td);
         tbody.appendChild(last_surface_autofocus_row);
+
+        let focus_dots_row = document.createElement("tr");
+        let focus_dots_label = document.createElement("td");
+        let focus_dots_label_text = document.createTextNode("Show Focal Dots");
+        focus_dots_label.appendChild(focus_dots_label_text);
+        focus_dots_row.appendChild(focus_dots_label);
+        let focus_dots_input_td = document.createElement("td");
+        let focus_dots_input_check = document.createElement("input");
+        focus_dots_input_check.type = "checkbox";
+        focus_dots_input_check.style = "margin-left: 2.5em;";
+        focus_dots_input_check.checked = app.design.env_marginal_vs_paraxial_focus_dots;
+        focus_dots_input_check.addEventListener('change', (event) => {
+            app.design.env_marginal_vs_paraxial_focus_dots = focus_dots_input_check.checked;
+            app.renderer.paint(app.design);
+        });
+        focus_dots_input_td.appendChild(focus_dots_input_check);
+        focus_dots_row.appendChild(focus_dots_input_td);
+        tbody.appendChild(focus_dots_row);
     }
 
     surfaceTableAddRowAfter() {
