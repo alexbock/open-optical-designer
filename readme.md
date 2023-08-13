@@ -20,6 +20,7 @@ and the design of reflecting telescopes is planned in the future.
 
 * Full geometrical ray tracing simulated in 3D
 * Aspherical surfaces (conic constant)
+* Define calculated surface properties as formulae
 * Incoming ray environment control
 * Automatic 2D cross section viewport
 * Geometric point spread function (spot diagram)
@@ -33,29 +34,32 @@ and the design of reflecting telescopes is planned in the future.
 * Import designs from ".len" files
 * Light and dark UI color schemes
 
+## Next Development Priorities
+
+* Mirrors (including systems such as catadioptric telescopes)
+* Design Optimization
+
 ## Future Plans
 
-* Optimization
+* Generate links for sharing designs by URL
+* Example designs (achromatic doublet, double Gauss, Cooke triplet, historical lenses, etc.)
+* Design generators/wizards (singlet, achromatic doublet, telescope objective, spherical best form lens, etc.)
 * Overall surface transmission for unpolarized light
 * Field curvature
 * Distortion
 * Abbe sine condition
 * Wavefront analysis
 * Modulation transfer function graph
-* Define surface properties in terms of a formula
 * Through-the-lens scene simulation (test chart, astronomical, custom photo with optional depth map)
-* Integrate high-resolution lens element model export for computer-controlled manufacturing (currently a separate program written in C++)
-* Mirrors (including systems such as catadioptric telescopes)
-* Design generators/wizards (singlet, achromatic doublet, telescope objective, spherical best form lens, etc.)
-* Example designs (achromatic doublet, double Gauss, Cooke triplet, historical lenses, etc.)
-* Material browser
+* 3D design view
+* Material browser/editor
 
 ## Potential Future Considerations
 
+* Export standard element drawing PDFs for manufacturing
 * Even-degree polynomial terms added to aspherical surfaces
 * Anti-reflective coatings
 * Tolerances
-* Export standard element drawing PDFs for commercial manufacturing
 
 ## Notes
 
