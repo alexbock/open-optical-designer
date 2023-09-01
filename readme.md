@@ -115,6 +115,10 @@ Examples:
 * To set the aperture radius of surface 2 to automatically update to match the aperture radius of surface 1, enter `=AR1` into the aperture radius field for surface 2.
 * To set the thickness of surface 1 to automatically update to be one quarter of surface 1's radius of curvature, enter `=RC1/4` into the thickness field for surface 1.
 
+Note that the dynamic thickness of the final surface is not available for use
+in a formula when the "Last Surface Autofocus" setting in the
+"Environment Control" section is on.
+
 ### Saving and Loading Files
 
 The "Save JSON File" button will download the current lens design as a JSON file.
