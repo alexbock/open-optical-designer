@@ -11,12 +11,31 @@ class UI {
         let input = document.createElement("input");
         input.type = "text";
         input.value = surface[field];
+        let formula_property = FormulaProperty.find(surface.formula_properties, field);
+        if (formula_property && formula_property.formula) {
+            input.value = "=" + formula_property.formula.source_text;
+            input.className = "surface-table-formula-input";
+        }
         if (input_id) {
             input.id = input_id;
         }
+        input.addEventListener('input', (event) => {
+            if (input.value.startsWith("=")) {
+                input.className = "surface-table-formula-input";
+            } else {
+                input.className = "";
+            }
+        });
         input.addEventListener('change', (event) => {
-            surface[field] = Number.parseFloat(input.value);
+            formula_property.formula = null;
+            if (input.value.startsWith("=")) {
+                formula_property.formula = new Formula(input.value.substring(1));
+            } else {
+                surface[field] = Number.parseFloat(input.value);
+            }
+            app.design.updateFormulaProperties();
             if (field == 'aperture_radius') {
+                // TODO apply validation to formula results too
                 if (surface[field] < 0) {
                     surface[field] *= -1;
                     input.value = surface[field];

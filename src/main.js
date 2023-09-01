@@ -21,11 +21,15 @@ class App {
 let app = new App();
 
 function saveJSONFile() {
-    let json = JSON.stringify(app.design, (k, v) => {
+    let json = JSON.stringify(app.design, function(k, v) {
         if (v instanceof Material) {
             return v.name;
         } else if (v == Infinity) {
             return "<INFINITY>";
+        } else if (v instanceof Formula) {
+            return v.source_text;
+        } else if (this instanceof FormulaProperty && k == "host") {
+            return undefined;
         } else {
             return v;
         }
@@ -40,7 +44,7 @@ function saveJSONFile() {
 }
 
 function parseJSONFile(text) {
-    let json = JSON.parse(text, (k, v) => {
+    let json = JSON.parse(text, function(k, v) {
         if (typeof k == 'string') {
             if (k == "material" || k.endsWith("_material")) {
                 return app.findMaterial(v);
@@ -48,8 +52,18 @@ function parseJSONFile(text) {
                 return Infinity;
             } else if (k == "surfaces" && Array.isArray(v)) {
                 return v.map(x => {
-                    return Object.assign(new Surface(), x);
+                    let result = Object.assign(new Surface(), x);
+                    for (let prop of result.formula_properties) {
+                        prop.host = result;
+                    }
+                    return result;
                 });
+            } else if (k == "formula_properties" && Array.isArray(v)) {
+                return v.map(x => {
+                    return Object.assign(new FormulaProperty(), x);
+                });
+            } else if (k == "formula" && v) {
+                return new Formula(v);
             }
         }
         return v;
@@ -105,6 +119,7 @@ function registerButtons() {
         app.design.addExamplePCXLens(75, 40, app.findMaterial("N-BK7"), AIR_MATERIAL);
         app.design.env_last_surface_autofocus = "marginal_ray";
         app.design.env_beam_radius = 10;
+        app.design.updateFormulaProperties();
         app.ui.selected_surface_number = 1;
         app.ui.writeDOMSurfaceTable();
         app.ui.writeDOMEnvironmentControl();

@@ -84,6 +84,10 @@ html, body, #app-container {
     align-items: center;
 }
 
+.surface-table-formula-input {
+    font-family: monospace;
+}
+
 table.edit-table {
     border-collapse: collapse;
     background-color: var(--table-bg-color);

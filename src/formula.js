@@ -179,15 +179,40 @@ class Formula {
     }
 }
 
-function createFormulaField() {
-    let x = function formulaField() {
-        if (this.evaluation_active) {
-            throw new FormulaError("cyclic reference within formulae", this.formula, null);
+class FormulaProperty {
+    constructor(host, field_name, formula_var_name) {
+        this.host = host;
+        this.field_name = field_name;
+        this.formula_var_name = formula_var_name;
+
+        this.formula = null;
+        this.is_updating = false;
+        this.needs_update = true;
+    }
+
+    #updateValue(v) {
+        this.host[this.field_name] = v;
+    }
+
+    evaluate(name_resolver) {
+        if (!this.needs_update) {
+            return;
         }
-        return this.formula_value;
-    };
-    x.formula_value = null;
-    x.formula = null;
-    x.evaluation_active = false;
-    return x;
+        if (this.is_updating) {
+            throw new FormulaError("recursive cycle in formula definitions", this.formula);
+        }
+        this.is_updating = true;
+        let result = this.formula.evaluate(name_resolver);
+        this.is_updating = false;
+        this.#updateValue(result);
+    }
+
+    static find(properties, field_name) {
+        for (let prop of properties) {
+            if (prop.field_name == field_name) {
+                return prop;
+            }
+        }
+        return null;
+    }
 }

@@ -67,11 +67,12 @@ class Design {
         front.aperture_radius = diameter / 2;
         front.material = lens_material;
         front.thickness = focal_length > 0 ? front.sag(diameter / 2) - front.sag(0) : 2;
+        front.thickness *= 1.25;
         front.thickness = Math.round(front.thickness * 100) / 100;
         this.surfaces.push(front);
         let back = new Surface();
         back.radius_of_curvature = Infinity;
-        back.aperture_radius = front.aperture_radius;
+        FormulaProperty.find(back.formula_properties, "aperture_radius").formula = new Formula("AR1");
         back.material = air_material;
         back.thickness = 10; // TODO
         this.surfaces.push(back);
@@ -541,5 +542,44 @@ class Design {
             }
         }
         return aperture_vs_image;
+    }
+
+    static resolveFormulaName(var_name) {
+        const design = app.design;
+        let surface_index = 1;
+        for (const surface of design.surfaces) {
+            for (const property of surface.formula_properties) {
+                if (var_name.startsWith(property.formula_var_name)) {
+                    const target_index = Number.parseInt(
+                        var_name.substring(property.formula_var_name.length)
+                    );
+                    if (surface_index == target_index) {
+                        if (property.formula) {
+                            property.evaluate(Design.resolveFormulaName);
+                        }
+                        return surface[property.field_name];
+                    }
+                }
+            }
+            surface_index += 1;
+        }
+        return null;
+    }
+
+    updateFormulaProperties() {
+        for (let surface of this.surfaces) {
+            for (let property of surface.formula_properties) {
+                if (property.formula) {
+                    property.needs_update = true;
+                }
+            }
+        }
+        for (let surface of this.surfaces) {
+            for (let property of surface.formula_properties) {
+                if (property.formula) {
+                    property.evaluate(Design.resolveFormulaName);
+                }
+            }
+        }
     }
 }

@@ -8,6 +8,13 @@ class Surface {
         this.material = AIR_MATERIAL;
 
         this.conic_constant = 0;
+
+        this.formula_properties = [
+            new FormulaProperty(this, "radius_of_curvature", "RC"),
+            new FormulaProperty(this, "aperture_radius", "AR"),
+            new FormulaProperty(this, "thickness", "TH"),
+            new FormulaProperty(this, "conic_constant", "CC"),
+        ];
     }
 
     sag(y) {
