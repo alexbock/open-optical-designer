@@ -29,7 +29,17 @@ class UI {
         input.addEventListener('change', (event) => {
             formula_property.formula = null;
             if (input.value.startsWith("=")) {
-                formula_property.formula = new Formula(input.value.substring(1));
+                try {
+                    formula_property.formula = new Formula(input.value.substring(1));
+                } catch (e) {
+                    if (e instanceof FormulaError) {
+                        e.showErrorAlert("Error parsing formula", formula_property);
+                        formula_property.formula = null;
+                        surface[field] = 0;
+                    } else {
+                        throw e;
+                    }
+                }
             } else {
                 surface[field] = Number.parseFloat(input.value);
             }

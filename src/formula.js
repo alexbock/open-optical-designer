@@ -7,6 +7,21 @@ class FormulaError extends Error {
         this.formula = formula;
         this.token = token;
     }
+
+    showErrorAlert(base_msg, property) {
+        let msg = base_msg;
+        if (this.formula) {
+            msg += " '=" + this.formula.source_text + "'";
+        }
+        if (property) {
+            const surface_index = app.design.surfaces.indexOf(property.host);
+            if (surface_index != -1) {
+                msg = "Field " + property.formula_var_name + (surface_index+1) + ": " + msg;
+            }
+        }
+        msg += ": " + this.message;
+        alert(msg);
+    }
 }
 
 class FormulaToken {
@@ -190,7 +205,7 @@ class FormulaProperty {
         this.needs_update = true;
     }
 
-    #updateValue(v) {
+    updateValue(v) {
         this.host[this.field_name] = v;
     }
 
@@ -203,8 +218,15 @@ class FormulaProperty {
         }
         this.is_updating = true;
         let result = this.formula.evaluate(name_resolver);
+        if (this.field_name == "aperture_radius") {
+            // TODO refactor this validation to a higher layer
+            if (result < 0 || !isFinite(result)) {
+                result = 0;
+            }
+        }
         this.is_updating = false;
-        this.#updateValue(result);
+        this.needs_update = false;
+        this.updateValue(result);
     }
 
     static find(properties, field_name) {

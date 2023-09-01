@@ -232,6 +232,7 @@ class Design {
         const si = this.surfaces.length - 1;
         const offset = this.distanceToVertexForSurface(si);
         this.surfaces[si].thickness = img_dist - offset;
+        FormulaProperty.find(this.surfaces[si].formula_properties, "thickness").formula = null;
         document.getElementById("last-thickness").value = this.surfaces[this.surfaces.length-1].thickness;
     }
 
@@ -554,6 +555,14 @@ class Design {
                         var_name.substring(property.formula_var_name.length)
                     );
                     if (surface_index == target_index) {
+                        if (surface_index == design.surfaces.length &&
+                        property.field_name == "thickness" &&
+                        design.env_last_surface_autofocus != "off") {
+                            throw new FormulaError(
+                                "cannot use thickness of last surface in formula with autofocus enabled",
+                                property.formula
+                            );
+                        }
                         if (property.formula) {
                             property.evaluate(Design.resolveFormulaName);
                         }
@@ -567,17 +576,33 @@ class Design {
     }
 
     updateFormulaProperties() {
+        let error_alert_shown = false;
         for (let surface of this.surfaces) {
             for (let property of surface.formula_properties) {
                 if (property.formula) {
                     property.needs_update = true;
+                    property.is_updating = false;
                 }
             }
         }
         for (let surface of this.surfaces) {
             for (let property of surface.formula_properties) {
                 if (property.formula) {
-                    property.evaluate(Design.resolveFormulaName);
+                    try {
+                        property.evaluate(Design.resolveFormulaName);
+                    } catch (e) {
+                        if (e instanceof FormulaError) {
+                            if (!error_alert_shown) {
+                                e.showErrorAlert("Error evaluating formula", property);
+                                error_alert_shown = true;
+                            }
+                            property.is_updating = false;
+                            property.needs_update = false;
+                            surface[property.field_name] = 0;
+                        } else {
+                            throw e;
+                        }
+                    }
                 }
             }
         }
