@@ -20,7 +20,7 @@ and the design of reflecting telescopes is planned in the future.
 
 * Full geometrical ray tracing simulated in 3D
 * Aspherical surfaces (conic constant)
-* Define calculated surface properties as formulae
+* Formula support for dynamically calculated surface properties
 * Incoming ray environment control
 * Automatic 2D cross section viewport
 * Geometric point spread function (spot diagram)
@@ -87,6 +87,34 @@ follow a standard such as considering units equivalent to millimeters. Inputs
 and outputs that require specific units (such as the design center wavelength
 in micrometers) are labeled appropriately.
 
+### Formula Syntax and Evaluation
+
+A surface input field value beginning with an equals sign (`=`) will be interpreted
+as a formula which can include numbers, arithmetic operations, and references to
+the final values of other surface fields.
+
+Supported operators: (for arbitrary operands `x` and `y`)
+
+* `x + y`: addition
+* `x - y`: subtraction
+* `x * y`: multiplication
+* `x / y`: division
+* `x ^ y`: exponentiation
+* `(x)`: parentheses
+* `-x`: negation
+
+Supported surface variables: (where `#` is the 1-based surface index)
+
+* `RC#`: radius of curvature
+* `AR#`: aperture radius
+* `TH#`: thickness
+* `CC#`: conic constant
+
+Examples:
+
+* To set the aperture radius of surface 2 to automatically update to match the aperture radius of surface 1, enter `=AR1` into the aperture radius field for surface 2.
+* To set the thickness of surface 1 to automatically update to be one quarter of surface 1's radius of curvature, enter `=RC1/4` into the thickness field for surface 1.
+
 ### Saving and Loading Files
 
 The "Save JSON File" button will download the current lens design as a JSON file.
@@ -116,6 +144,10 @@ It is written in plain, modern JavaScript as a single page application
 using standard HTML and CSS with no build, preprocessing, generation, or
 transformation steps. It can be run directly in the browser locally
 without a web server if desired.
+
+### Unit Tests
+
+Open `tests/test.html` in a browser to run the unit test suite.
 
 ## Copyright
 
